@@ -32,7 +32,7 @@ export const Nav = () => {
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    axios.get("http://localhost:3001/sensors/getAllLevels").then((res)=>{setAllLevel(res.data)})
+    // axios.get("http://localhost:3001/sensors/getAllLevels").then((res)=>{setAllLevel(res.data)})
   };
 
   const handleClose = () => {
