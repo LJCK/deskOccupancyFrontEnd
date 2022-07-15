@@ -32,7 +32,7 @@ export const Nav = () => {
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    // axios.get("http://localhost:3001/sensors/getAllLevels").then((res)=>{setAllLevel(res.data)})
+    axios.get("http://localhost:3001/getAllLevels").then((res)=>setAllLevel(res.data))
   };
 
   const handleClose = () => {
@@ -43,6 +43,17 @@ export const Nav = () => {
     navigate(`/level/${level}`);
     setAnchorEl(null);
   }
+  
+  // useEffect( () => {
+  //   async function getAllLevels() {
+  //     return axios.get("http://localhost:3001/getAllLevels").then((res)=>res.data)
+  //   }
+  //   // setAllLevel(getAllLevels())
+    
+    
+    
+  // }, []);
+
   return (
     <div>
       <ThemeProvider theme={theme}>
@@ -77,7 +88,7 @@ export const Nav = () => {
         TransitionComponent={Fade}
       >
         {allLevels.map((item,index)=>{
-          return <MenuItem key={index} onClick={()=>changeURL(item.level)}>{`Level ${item.level}`}</MenuItem>
+          return <MenuItem key={index} onClick={()=>changeURL(item)}>{`Level ${item}`}</MenuItem>
         })}
         {/* <MenuItem onClick={handleClose}>profile</MenuItem> */}
       </Menu>

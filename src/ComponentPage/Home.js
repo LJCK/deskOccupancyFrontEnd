@@ -5,11 +5,12 @@ import data from '../images/data'
 import Tables from '../images/Tables'
 
 export const Home = () => {
-  const [tableStatus,setTableStatus] = useState(data)
+  // const [tableStatus,setTableStatus] = useState(data)
   // const tableStatus = useRef(data)
   return (
     <div>
-      <Tables table1_col = 'red' tableObj = {tableStatus}/>
+      {/* <Tables table1_col = 'red' tableObj = {tableStatus}/> */}
+      Home Page
     </div>
   )
 }
