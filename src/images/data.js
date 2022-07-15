@@ -11,7 +11,7 @@ export default[
     _id:"nv_ta_l8_2",
     location:"Novena Tower A",
     level:{"$numberInt":"8"},
-    occupancyStatus:"occupied",
+    occupancyStatus:"unoccupied",
     expiryTime:"15:03:51",
     __v:{"$numberInt":"0"}
   },
@@ -27,7 +27,7 @@ export default[
     _id:"nv_ta_l8_4",
     location:"Novena Tower A",
     level:{"$numberInt":"8"},
-    occupancyStatus:"occupied",
+    occupancyStatus:"unoccupied",
     expiryTime:"15:03:51",
     __v:{"$numberInt":"0"}
   },
