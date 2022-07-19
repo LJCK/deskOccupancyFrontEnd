@@ -22,9 +22,16 @@ const style = {
 const Table=()=>{
 
   const [tableStatus,setTableStatus] = useState([])
+  const [floorPlan,setFloorPlan] = useState()
   const [reload, setReload] = useState(false)
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+    axios.get(`http://localhost:3001/floorPlan/getImage?id=l${id}_floor_plan`).then((res)=>{
+      // setFloorPlan(res.data)
+      // console.log(res.data)
+    })
+  }
   const handleClose = () => setOpen(false);
 
   const { id } = useParams()
@@ -33,7 +40,7 @@ const Table=()=>{
   }, 60000);
 
   useEffect(()=>{
-    axios.get(`http://localhost:3001/getDeskStatus?level=${id}`,tableStatus).then((res)=>{
+    axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
       setTableStatus(res.data)
     })
   },[id,reload])
@@ -67,8 +74,9 @@ const Table=()=>{
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <img src="https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960" alt="" />
-          <h3 style={{"text-align": "center"}}>Floor Plan</h3>
+          {/* <img src="https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960" alt="" /> */}
+          <img src={`data:image/png;base64, MmM0ODg1MDg5YzM3MDVkZDZjZmY4N2U3YTJhNjg4NjQ=`} alt="" />
+          <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box>
       </Modal>
       
