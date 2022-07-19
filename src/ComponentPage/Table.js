@@ -27,10 +27,10 @@ const Table=()=>{
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
-    axios.get(`http://localhost:3001/floorPlan/getImage?id=l${id}_floor_plan`).then((res)=>{
+    // axios.get(`http://localhost:3001/floorPlan/getImage?id=l${id}_floor_plan`).then((res)=>{
       // setFloorPlan(res.data)
       // console.log(res.data)
-    })
+    // })
   }
   const handleClose = () => setOpen(false);
 
