@@ -1,5 +1,6 @@
-import React,{useState, useEffect} from 'react'
+import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -43,16 +44,6 @@ export const Nav = () => {
     navigate(`/level/${level}`);
     setAnchorEl(null);
   }
-  
-  // useEffect( () => {
-  //   async function getAllLevels() {
-  //     return axios.get("http://localhost:3001/getAllLevels").then((res)=>res.data)
-  //   }
-  //   // setAllLevel(getAllLevels())
-    
-    
-    
-  // }, []);
 
   return (
     <div>
@@ -73,6 +64,21 @@ export const Nav = () => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={()=>navigate('/')}>
                 Desk Occupancy Checker
               </Typography>
+              <Box sx={{
+                display: 'flex',
+                '& > *': {m: 1,},
+              }}>
+                <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/editTable')}>
+                  Edit Table
+                </Button>
+                <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/')}>
+                  Log Out
+                </Button>
+                <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/')}>
+                  Log In
+                </Button>
+              </Box>
+              
             </Toolbar>
           </AppBar>
         </Box>
