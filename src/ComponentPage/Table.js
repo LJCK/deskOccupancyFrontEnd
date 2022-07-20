@@ -27,10 +27,10 @@ const Table=()=>{
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
-    // axios.get(`http://localhost:3001/floorPlan/getImage?id=l${id}_floor_plan`).then((res)=>{
-      // setFloorPlan(res.data)
-      // console.log(res.data)
-    // })
+    axios.get(`http://localhost:3001/floorPlan/getImage?filename=level${id}_floor_plan.png`).then((res)=>{
+      setFloorPlan(res.data)
+      console.log(res.data)
+    })
   }
   const handleClose = () => setOpen(false);
 
@@ -75,7 +75,7 @@ const Table=()=>{
       >
         <Box sx={style}>
           {/* <img src="https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960" alt="" /> */}
-          <img src={`data:image/png;base64, MmM0ODg1MDg5YzM3MDVkZDZjZmY4N2U3YTJhNjg4NjQ=`} alt="" />
+          <img src={floorPlan} alt="" />
           <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box>
       </Modal>
