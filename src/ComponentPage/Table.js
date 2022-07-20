@@ -6,8 +6,8 @@ import ImageIcon from '@mui/icons-material/Image';
 import { red, green } from '@mui/material/colors';
 import axios from 'axios'
 import { Box } from "@mui/material";
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { FloorPlanDisplay } from "./FloorPlanDisplay";
 
 const style = {
   position: 'absolute',
@@ -22,14 +22,13 @@ const style = {
 const Table=()=>{
 
   const [tableStatus,setTableStatus] = useState([])
-  const [floorPlan,setFloorPlan] = useState()
+  const [floorPlan,setFloorPlan] = useState([])
   const [reload, setReload] = useState(false)
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
+  const handleOpen = async() => {
     setOpen(true);
-    axios.get(`http://localhost:3001/floorPlan/getImage?filename=level${id}_floor_plan.png`).then((res)=>{
+    await axios.get(`http://localhost:3001/floorPlan/getImage?filename=l${id}_floor_plan`).then((res)=>{
       setFloorPlan(res.data)
-      console.log(res.data)
     })
   }
   const handleClose = () => setOpen(false);
@@ -75,7 +74,13 @@ const Table=()=>{
       >
         <Box sx={style}>
           {/* <img src="https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960" alt="" /> */}
-          <img src={floorPlan} alt="" />
+          {floorPlan.map((singleData, index) => {
+            // console.log(singleData)
+            const base64String = btoa(
+              String.fromCharCode(...new Uint8Array(singleData.img.data.data))
+            );
+            return <img src={`data:image/jpg ;base64,${base64String}`} width="100%" key={index}/>
+          })}
           <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box>
       </Modal>
