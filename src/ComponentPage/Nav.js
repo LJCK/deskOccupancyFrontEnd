@@ -1,6 +1,6 @@
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
@@ -10,6 +10,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import Buttons from './Buttons';
 import axios from 'axios'
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -46,7 +47,7 @@ export const Nav = () => {
   }
 
   return (
-    <div>
+    <div >
       <ThemeProvider theme={theme}>
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static" color='black'>
@@ -64,21 +65,7 @@ export const Nav = () => {
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={()=>navigate('/')}>
                 Desk Occupancy Checker
               </Typography>
-              <Box sx={{
-                display: 'flex',
-                '& > *': {m: 1,},
-              }}>
-                <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/editTable')}>
-                  Edit Table
-                </Button>
-                <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/')}>
-                  Log Out
-                </Button>
-                <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/')}>
-                  Log In
-                </Button>
-              </Box>
-              
+              <Buttons/>
             </Toolbar>
           </AppBar>
         </Box>
@@ -96,7 +83,6 @@ export const Nav = () => {
         {allLevels.map((item,index)=>{
           return <MenuItem key={index} onClick={()=>changeURL(item)}>{`Level ${item}`}</MenuItem>
         })}
-        {/* <MenuItem onClick={handleClose}>profile</MenuItem> */}
       </Menu>
     </div>
   )

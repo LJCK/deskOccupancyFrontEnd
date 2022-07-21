@@ -19,7 +19,7 @@ const style = {
   boxShadow: 24
 };
 
-const Table=()=>{
+const DisplayTableStatus=()=>{
 
   const [tableStatus,setTableStatus] = useState([])
   const [floorPlan,setFloorPlan] = useState([])
@@ -50,10 +50,9 @@ const Table=()=>{
       <Grid item xs={6} md={11}>
         <h1>Level {id}</h1>
       </Grid>
-      <Grid item xs={6} md={1}>
-        <ImageIcon fontSize="large" sx={{mt:3}} onClick={handleOpen}/>
+      <Grid item xs={6} md={1} sx={{mr:-5}}>
+        <ImageIcon fontSize="large" sx={{mt:3}} onClick={handleOpen} style={{position:"fixed", right:"1%"}}/>
       </Grid>
-      
     </Grid>
     
     <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
@@ -73,14 +72,19 @@ const Table=()=>{
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          {/* <img src="https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960" alt="" /> */}
           {floorPlan.map((singleData, index) => {
-            // console.log(singleData)
-            const base64String = btoa(
-              String.fromCharCode(...new Uint8Array(singleData.img.data.data))
-            );
-            return <img src={`data:image/jpg ;base64,${base64String}`} width="100%" key={index}/>
+            const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+              function (data, byte) {
+                  return data + String.fromCharCode(byte);
+              },
+              ''
+          ));
+            // const base64String = btoa(
+            //   String.fromCharCode(...new Uint8Array(singleData.img.data.data))
+            // );
+            return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
           })}
+          {/* <FloorPlanDisplay data ={floorPlan[0]} /> */}
           <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box>
       </Modal>
@@ -89,4 +93,4 @@ const Table=()=>{
   )
 }
 
-export default Table
+export default DisplayTableStatus
