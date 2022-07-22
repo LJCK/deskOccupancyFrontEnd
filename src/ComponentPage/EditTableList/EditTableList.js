@@ -1,5 +1,4 @@
 import React,{useState} from 'react'
-import SettingsIcon from '@mui/icons-material/Settings';
 import Grid from '@mui/material/Grid';
 import DropDownInput from './DropDownInput';
 import { ShowAllTables } from './ShowAllTables';

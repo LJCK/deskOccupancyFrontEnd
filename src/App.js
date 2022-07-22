@@ -1,9 +1,9 @@
-import DisplayTableStatus from "./ComponentPage/DisplayTableStatus";
+import DisplayTableStatus from "./ComponentPage/DisplayTableStatus/DisplayTableStatus";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import { Home } from "./ComponentPage/Home";
-import { Nav } from "./ComponentPage/Nav";
-import {EditTableList} from "./ComponentPage/EditTableList"
+import { Nav } from "./ComponentPage/NavBar/Nav";
+import {EditTableList} from "./ComponentPage/EditTableList/EditTableList"
 
 function App() {
   return (

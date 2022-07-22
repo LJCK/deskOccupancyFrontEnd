@@ -25,9 +25,9 @@ const DisplayTableStatus=()=>{
   const [floorPlan,setFloorPlan] = useState([])
   const [reload, setReload] = useState(false)
   const [open, setOpen] = React.useState(false);
-  const handleOpen = async() => {
+  const handleOpen = () => {
     setOpen(true);
-    await axios.get(`http://localhost:3001/floorPlan/getImage?filename=l${id}_floor_plan`).then((res)=>{
+    axios.get(`http://localhost:3001/floorPlan/getImage?filename=l${id}_floor_plan`).then((res)=>{
       setFloorPlan(res.data)
     })
   }
