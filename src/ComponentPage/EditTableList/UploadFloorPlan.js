@@ -6,6 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
+import axios from 'axios';
 
 const UploadFloorPlan = ({locationState,levelState}) => {
 
@@ -16,20 +17,20 @@ const UploadFloorPlan = ({locationState,levelState}) => {
   })
 
   // drag state
-  const [dragActive, setDragActive] = useState(true);
+  const [dragActive, setDragActive] = useState(false);
   // ref
   const inputRef = useRef(null);
 
-  // // handle drag events
-  // const handleDrag = (e)=> {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   if (e.type === "dragenter" || e.type === "dragover") {
-  //     setDragActive(true);
-  //   } else if (e.type === "dragleave") {
-  //     setDragActive(false);
-  //   }
-  // };
+  // handle drag events
+  const handleDrag = (e)=> {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
 
   // triggers when file is dropped
   const handleDrop = (e)=>{
@@ -37,16 +38,16 @@ const UploadFloorPlan = ({locationState,levelState}) => {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFloorPlan({...floorPlan,['floorPlan']:e.dataTransfer.files})
+      setFloorPlan({...floorPlan,['floorPlan']:e.dataTransfer.files[0]})
       console.log(floorPlan)
     }
   };
 
   // triggers when file is selected with click
-  const handleUploadChange = function(e) {
+  const handleUploadChange = (e)=>{
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
-      setFloorPlan({...floorPlan,['floorPlan']:e.target.files})
+      setFloorPlan({...floorPlan,['floorPlan']:e.target.files[0]})
       console.log(floorPlan)
     }
   };
@@ -57,7 +58,15 @@ const UploadFloorPlan = ({locationState,levelState}) => {
   };
 
   const handleSubmit=()=>{
-
+    const newFloorPlanObj = new FormData()
+    newFloorPlanObj.append('UID',`${locations[floorPlan['location']]}_${floorPlan['level']}`)
+    newFloorPlanObj.append("file",floorPlan['floorPlan'])
+    axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
+      headers:{
+        "Content-Type":"multipart/form-data"
+      }
+    }).then((res)=>{alert(res.data)}).catch((error)=>{alert(error.response.data)})
+    setFloorPlan({"location":'', "level": '', "floorPlan": ''})
   }
 
   const handleFormChange=(e)=>{
@@ -109,14 +118,12 @@ const UploadFloorPlan = ({locationState,levelState}) => {
           </FormControl>
 
           <FormControl fullWidth>
-            <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleUploadChange} />
+            <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleUploadChange} name="floorPlan" required/>
             <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>
-              <div id="drag-file-element" onDrop={handleDrop}>
-                {/* <h5></h5> */}
+              <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}>
                 <button className="upload-button" onClick={onButtonClick}>Drag and drop your file here or Upload a file</button>
               </div> 
             </label>
-            {/* { dragActive && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> } */}
           </FormControl>
           <Button type='submit' variant="outlined">Submit</Button>
         </Stack>

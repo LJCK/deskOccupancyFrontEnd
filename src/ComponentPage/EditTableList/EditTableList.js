@@ -3,11 +3,12 @@ import Grid from '@mui/material/Grid';
 import DropDownInput from './DropDownInput';
 import ShowAllTables from './ShowAllTables';
 import UploadFloorPlan from './UploadFloorPlan';
-
+import allLocations from '../../Constants/locations.json'
+import allLevels from '../../Constants/levels.json'
 export const EditTableList = () => {
   
-  const [locations,setLocations]= useState({"Novena Tower A":'nva', "Novena Tower B":"nvb"})
-  const [levels,setLevels] = useState({"Level 1":'1', "Level 2":'2', "Level 3":'3', "Level 4":'4', "Level 5":'5', "Level 6":'6', "Level 7":'7', "Level 8":'8', "Level 9":'9',"Level 10":'10',"Level 11":'11', "Level 12":'12', "Level 13":'13', "Level 14":'14', "Level 15":'15', "Level 16":'16', "Level 17":'17', "Level 18":'18', "Level 19":'19',"Level 20":'20',"Level 21":'21', "Level 22":'22', "Level 23":'23', "Level 24":'24', "Level 25":'25', "Level 26":'26', "Level 27":'27', "Level 28":'28', "Level 29":'29'})
+  const [locations,setLocations]= useState(allLocations)
+  const [levels,setLevels] = useState(allLevels)
   
   const handleUpdate=(e)=>{
     e.preventDefault()

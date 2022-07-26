@@ -11,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Buttons from './Buttons';
+import allLocations from '../../Constants/locations.json'
+import allLevels from '../../Constants/levels.json'
 import axios from 'axios'
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -28,22 +30,31 @@ export const Nav = () => {
 
   let navigate = useNavigate();
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [allLevels,setAllLevel] = useState([]);
-  const open = Boolean(anchorEl);
+  const [locationAnchorEl, setLocationAnchorEl] = useState(null);
+  const [levelAnchorEl, setLevelAnchorEl] = useState(null);
+  const locationOpen = Boolean(locationAnchorEl);
+  const levelOpen = Boolean(levelAnchorEl);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    axios.get("http://localhost:3001/desk/getAllLevels").then((res)=>setAllLevel(res.data))
+  const [locations,setLocations] = useState(allLocations);
+  const [levels, setLevels] = useState(allLevels)
+
+  const showLocations = (e) => {
+    setLocationAnchorEl(e.currentTarget);
+    // axios.get("http://localhost:3001/desk/getLevels?location=${}").then((res)=>setLevels(res.data))
   };
+  const showLevels =(e)=>{
+    setLevelAnchorEl(e.currentTarget)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
+    setLocationAnchorEl(null);
+    setLevelAnchorEl(null)
   };
 
-  const changeURL =(level)=>{
+  const URLredirect =(level)=>{
     navigate(`/level/${level}`);
-    setAnchorEl(null);
+    setLocationAnchorEl(null);
+    setLevelAnchorEl(null)
   }
 
   return (
@@ -58,7 +69,7 @@ export const Nav = () => {
                 color="inherit"
                 aria-label="menu"
                 sx={{ mr: 2 }}
-                onClick = {handleClick}
+                onClick = {showLocations}
               >
                 <MenuIcon />
               </IconButton>
@@ -75,13 +86,27 @@ export const Nav = () => {
         MenuListProps={{
           'aria-labelledby': 'fade-button',
         }}
-        anchorEl={anchorEl}
-        open={open}
+        anchorEl={locationAnchorEl}
+        open={locationOpen}
         onClose={handleClose}
         TransitionComponent={Fade}
       >
-        {allLevels.map((item,index)=>{
-          return <MenuItem key={index} onClick={()=>changeURL(item)}>{`Level ${item}`}</MenuItem>
+        {Object.keys(locations).map((location,index)=>{
+          return <MenuItem key={index} onClick = {showLevels}>{location}</MenuItem>
+        })}
+      </Menu>
+      <Menu
+        id="fade-menu"
+        MenuListProps={{
+          'aria-labelledby': 'fade-button',
+        }}
+        anchorEl={levelAnchorEl}
+        open={levelOpen}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+      >
+        {Object.keys(levels).map((level,index)=>{
+          return <MenuItem key={index} onClick = {()=>URLredirect(levels[level])}>{level}</MenuItem>
         })}
       </Menu>
     </div>
