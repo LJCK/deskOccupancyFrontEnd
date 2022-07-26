@@ -43,6 +43,7 @@ export const Nav = () => {
     // axios.get("http://localhost:3001/desk/getLevels?location=${}").then((res)=>setLevels(res.data))
   };
   const showLevels =(e)=>{
+    console.log(e.currentTarget)
     setLevelAnchorEl(e.currentTarget)
   }
 
