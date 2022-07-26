@@ -10,7 +10,7 @@ import axios from 'axios';
 import { DataGrid } from '@mui/x-data-grid';
 import { style } from '@mui/system';
 
-export const ShowAllTables = ({locationState}) => {
+const ShowAllTables = ({locationState}) => {
   const [location, setLocation] = useState(locationState)
 
   const columns = [
@@ -42,3 +42,5 @@ export const ShowAllTables = ({locationState}) => {
     </div>
   )
 }
+
+export default ShowAllTables

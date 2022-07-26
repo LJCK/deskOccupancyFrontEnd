@@ -24,13 +24,15 @@ const DropDownInput = ({locationState,levelState}) => {
   };
 
   const handleSubmit=()=>{
-    let id = `${newDesk['location']}_${newDesk['level']}_${newDesk['id']}`
+    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
+    let location = newDesk['location']
     const newDeskObj = {
-      id : {
-        'expiryTime':null
-      }
+      deskID:id,
+      location: location,
+      locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
+      level: newDesk['level']
     }
-    axios.post()
+    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{alert(res.data)}).catch((error)=>{alert(error.response.data)})
     console.log(newDeskObj)
     setNewDesk({"location":'', "level": '', "id": ''})
   }
@@ -55,7 +57,7 @@ const DropDownInput = ({locationState,levelState}) => {
               required
             >
             {Object.keys(locations).map((location, index)=>{
-              return <MenuItem key={index} value={locations[location]}>{location}</MenuItem>
+              return <MenuItem key={index} value={location}>{location}</MenuItem>
             })}
             </Select>
           </FormControl>
