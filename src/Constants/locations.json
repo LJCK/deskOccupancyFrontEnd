@@ -1,1 +1,4 @@
-{"Novena Tower A":"nva", "Novena Tower B":"nvb"}
+[
+  {"location":"Novena Tower A","id":"nva"}, 
+  {"location":"Novena Tower B","id":"nvb"}
+]

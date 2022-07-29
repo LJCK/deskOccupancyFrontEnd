@@ -32,7 +32,7 @@ export const Nav = () => {
   let navigate = useNavigate();
 
   const [locations, setLocations] = useState(allLocations)
-  const [levels, setLevels] = useState(allLevels)
+  const [levels, setLevels] = useState([])
   const [locationAnchorEl, setLocationAnchorEl] = useState(null);
   const [levelAnchorEl, setLevelAnchorEl] = useState(null);
 
@@ -40,9 +40,9 @@ export const Nav = () => {
     setLocationAnchorEl(e.currentTarget);
     // axios.get("http://localhost:3001/desk/getLevels?location=${}").then((res)=>setLevels(res.data))
   };
-  const showLevel = (e) => {
-    setLevelAnchorEl(e.currentTarget)
-    // axios get levels 
+  const showLevel = (event,location) => {
+    setLocations(event.currentTarget)
+    axios.get(`http://localhost:3001/desk/getAllLevels?location=${location}`).then((res)=>setLevels(res.data))
   }
   const handleClose = () => {
     setLocationAnchorEl(null);
@@ -98,8 +98,8 @@ export const Nav = () => {
           horizontal: 'left',
         }}
       >
-        {Object.keys(locations).map((location,index)=>{
-          return <MenuItem key={index} onClick={showLevel}>{location}</MenuItem>
+        {locations.map((item,index)=>{
+          return <MenuItem key={index} onClick={event=>showLevel(event,item.location)}>{item.location}</MenuItem>
         })}
       </Popover>
 
@@ -117,35 +117,11 @@ export const Nav = () => {
           horizontal: 'left',
         }}
       >
-        {Object.keys(levels).map((level,index)=>{
-          return <MenuItem key={index} onClick = {()=>URLredirect(levels[level])}>{level}</MenuItem>
+        {levels.map((item,index)=>{
+          console.log(item.level)
+          return <MenuItem key={index} onClick = {()=>URLredirect(item._id)}>{item.level}</MenuItem>
         })}
       </Popover>
-      {/* <Menu
-        id="fade-menu"
-        MenuListProps={{
-          'aria-labelledby': 'fade-button',
-        }}
-        TransitionComponent={Fade}
-      >
-        {Object.keys(locations).map((location,index)=>{
-          return <MenuItem key={index} onClick = {showLevels}>{location}</MenuItem>
-        })}
-      </Menu>
-      <Menu
-        id="fade-menu"
-        MenuListProps={{
-          'aria-labelledby': 'fade-button',
-        }}
-        anchorEl={levelAnchorEl}
-        open={levelOpen}
-        onClose={handleClose}
-        TransitionComponent={Fade}
-      >
-        {Object.keys(levels).map((level,index)=>{
-          return <MenuItem key={index} onClick = {()=>URLredirect(levels[level])}>{level}</MenuItem>
-        })}
-      </Menu> */}
     </div>
   )
 }
