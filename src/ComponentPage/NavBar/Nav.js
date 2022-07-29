@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import Popover from '@mui/material/Popover';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Fade from '@mui/material/Fade';
@@ -30,23 +31,19 @@ export const Nav = () => {
 
   let navigate = useNavigate();
 
+  const [locations, setLocations] = useState(allLocations)
+  const [levels, setLevels] = useState(allLevels)
   const [locationAnchorEl, setLocationAnchorEl] = useState(null);
   const [levelAnchorEl, setLevelAnchorEl] = useState(null);
-  const locationOpen = Boolean(locationAnchorEl);
-  const levelOpen = Boolean(levelAnchorEl);
 
-  const [locations,setLocations] = useState(allLocations);
-  const [levels, setLevels] = useState(allLevels)
-
-  const showLocations = (e) => {
+  const showLocation = (e) => {
     setLocationAnchorEl(e.currentTarget);
     // axios.get("http://localhost:3001/desk/getLevels?location=${}").then((res)=>setLevels(res.data))
   };
-  const showLevels =(e)=>{
-    console.log(e.currentTarget)
+  const showLevel = (e) => {
     setLevelAnchorEl(e.currentTarget)
+    // axios get levels 
   }
-
   const handleClose = () => {
     setLocationAnchorEl(null);
     setLevelAnchorEl(null)
@@ -57,6 +54,11 @@ export const Nav = () => {
     setLocationAnchorEl(null);
     setLevelAnchorEl(null)
   }
+
+  const locationOpen = Boolean(locationAnchorEl);
+  const levelOpen = Boolean(levelAnchorEl)
+  const locationID = locationOpen ? 'simple-popover' : undefined;
+  const levelID = levelOpen ? 'simple-popover' : undefined;
 
   return (
     <div >
@@ -70,7 +72,7 @@ export const Nav = () => {
                 color="inherit"
                 aria-label="menu"
                 sx={{ mr: 2 }}
-                onClick = {showLocations}
+                onClick = {showLocation}
               >
                 <MenuIcon />
               </IconButton>
@@ -82,14 +84,48 @@ export const Nav = () => {
           </AppBar>
         </Box>
       </ThemeProvider>
-      <Menu
+      <Popover
+        id={locationID}
+        open={locationOpen}
+        anchorEl={locationAnchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        {Object.keys(locations).map((location,index)=>{
+          return <MenuItem key={index} onClick={showLevel}>{location}</MenuItem>
+        })}
+      </Popover>
+
+      <Popover
+        id={levelID}
+        open={levelOpen}
+        anchorEl={levelAnchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        {Object.keys(levels).map((level,index)=>{
+          return <MenuItem key={index} onClick = {()=>URLredirect(levels[level])}>{level}</MenuItem>
+        })}
+      </Popover>
+      {/* <Menu
         id="fade-menu"
         MenuListProps={{
           'aria-labelledby': 'fade-button',
         }}
-        anchorEl={locationAnchorEl}
-        open={locationOpen}
-        onClose={handleClose}
         TransitionComponent={Fade}
       >
         {Object.keys(locations).map((location,index)=>{
@@ -109,7 +145,7 @@ export const Nav = () => {
         {Object.keys(levels).map((level,index)=>{
           return <MenuItem key={index} onClick = {()=>URLredirect(levels[level])}>{level}</MenuItem>
         })}
-      </Menu>
+      </Menu> */}
     </div>
   )
 }
