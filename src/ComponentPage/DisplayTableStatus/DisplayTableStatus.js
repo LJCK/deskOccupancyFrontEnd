@@ -7,7 +7,6 @@ import { red, green } from '@mui/material/colors';
 import axios from 'axios'
 import { Box } from "@mui/material";
 import Modal from '@mui/material/Modal';
-import { FloorPlanDisplay } from "./FloorPlanDisplay";
 
 const style = {
   position: 'absolute',
@@ -28,6 +27,7 @@ const DisplayTableStatus=()=>{
   const handleOpen = () => {
     setOpen(true);
     axios.get(`http://localhost:3001/floorPlan/getImage?filename=l${id}_floor_plan`).then((res)=>{
+      console.log(res.data)
       setFloorPlan(res.data)
     })
   }
@@ -72,6 +72,7 @@ const DisplayTableStatus=()=>{
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+
           {floorPlan.map((singleData, index) => {
             const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
               function (data, byte) {
@@ -79,12 +80,8 @@ const DisplayTableStatus=()=>{
               },
               ''
           ));
-            // const base64String = btoa(
-            //   String.fromCharCode(...new Uint8Array(singleData.img.data.data))
-            // );
             return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
           })}
-          {/* <FloorPlanDisplay data ={floorPlan[0]} /> */}
           <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box>
       </Modal>

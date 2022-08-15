@@ -41,8 +41,9 @@ export const Nav = () => {
     // axios.get("http://localhost:3001/desk/getLevels?location=${}").then((res)=>setLevels(res.data))
   };
   const showLevel = (event,location) => {
-    setLocations(event.currentTarget)
-    axios.get(`http://localhost:3001/desk/getAllLevels?location=${location}`).then((res)=>setLevels(res.data))
+    setLevelAnchorEl(event.currentTarget)
+
+    axios.get(`http://localhost:3001/desk/getAllLevels?location=${location}`).then((res)=>{setLevels(res.data)})
   }
   const handleClose = () => {
     setLocationAnchorEl(null);
@@ -118,8 +119,7 @@ export const Nav = () => {
         }}
       >
         {levels.map((item,index)=>{
-          console.log(item.level)
-          return <MenuItem key={index} onClick = {()=>URLredirect(item._id)}>{item.level}</MenuItem>
+          return <MenuItem key={index} onClick = {()=>URLredirect(item.level)}>{item.level}</MenuItem>
         })}
       </Popover>
     </div>
