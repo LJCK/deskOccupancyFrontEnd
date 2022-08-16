@@ -2,7 +2,7 @@ import React,{useState} from 'react'
 import Grid from '@mui/material/Grid';
 import DropDownInput from './DropDownInput';
 import ShowAllTables from './ShowAllTables';
-import UploadFloorPlan from './UploadFloorPlan';
+
 import allLocations from '../../Constants/locations.json'
 import allLevels from '../../Constants/levels.json'
 export const EditTableList = () => {
@@ -19,15 +19,8 @@ export const EditTableList = () => {
         <Grid item xs={11}>
           <h1>Add Table</h1>
         </Grid>
-        <Grid item xs={12}>
-          <DropDownInput locationState={locations} levelState={levels}/>
-        </Grid>
-
         <Grid item xs={11}>
-          <h1>Upload Floor Plan</h1>
-        </Grid>
-        <Grid item xs={12}>
-          <UploadFloorPlan locationState={locations} levelState={levels} />
+          <DropDownInput locationState={locations} levelState={levels}/>
         </Grid>
 
         <Grid item xs={12}>
@@ -38,7 +31,6 @@ export const EditTableList = () => {
         </Grid>
       </Grid>
 
-      
     </div>
   )
 }

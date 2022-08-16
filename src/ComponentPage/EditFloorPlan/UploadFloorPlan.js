@@ -94,8 +94,8 @@ const UploadFloorPlan = ({locationState,levelState}) => {
               onChange={handleFormChange}
               required
             >
-            {Object.keys(locations).map((location, index)=>{
-              return <MenuItem key={index} value={location}>{location}</MenuItem>
+            {locations.map((location, index)=>{
+              return <MenuItem key={index} value={location.id}>{location.location}</MenuItem>
             })}
             </Select>
           </FormControl>

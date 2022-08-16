@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack';
 import axios from 'axios';
 
 const DropDownInput = ({locationState,levelState}) => {
+  
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   
@@ -56,8 +57,8 @@ const DropDownInput = ({locationState,levelState}) => {
               onChange={handleChange}
               required
             >
-            {Object.keys(locations).map((location, index)=>{
-              return <MenuItem key={index} value={location}>{location}</MenuItem>
+            {locations.map((location, index)=>{
+              return <MenuItem key={index} value={location.id}>{location.location}</MenuItem>
             })}
             </Select>
           </FormControl>

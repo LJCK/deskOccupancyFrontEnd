@@ -10,9 +10,6 @@ const Buttons = () => {
   return (
     <div>
       <Box sx={{display: 'flex','& > *': {m: 1,},}}>
-        <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/editTable')}>
-          Edit Table
-        </Button>
         <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/')}>
           Log Out
         </Button>
