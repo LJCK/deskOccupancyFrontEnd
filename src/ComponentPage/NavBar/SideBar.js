@@ -115,7 +115,7 @@ export const SideBar = () => {
           </IconButton>
           {/* <a href="/"><AirlineSeatReclineNormalIcon style={{"marginLeft":"-1.5rem"}} fontSize="large"/></a> */}
           
-          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Bum Go Where
           </Typography>
           <AuthButtons/>
