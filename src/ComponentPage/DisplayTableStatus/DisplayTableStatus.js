@@ -7,6 +7,7 @@ import { red, green } from '@mui/material/colors';
 import axios from 'axios'
 import { Box } from "@mui/material";
 import Modal from '@mui/material/Modal';
+import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
 const style = {
   position: 'absolute',
@@ -15,7 +16,8 @@ const style = {
   transform: 'translate(-50%, -50%)',
   bgcolor: 'background.paper',
   border: '2px solid #000',
-  boxShadow: 24
+  boxShadow: 24,
+  textAlign: 'center'
 };
 
 const DisplayTableStatus=()=>{
@@ -27,8 +29,11 @@ const DisplayTableStatus=()=>{
   const handleOpen = () => {
     setOpen(true);
     axios.get(`http://localhost:3001/floorPlan/getImage?filename=l${id}_floor_plan`).then((res)=>{
-      console.log(res.data)
-      setFloorPlan(res.data)
+      if (res.data[0] === null){
+        setFloorPlan([])
+      }else{
+        setFloorPlan(res.data)
+      }
     })
   }
   const handleClose = () => setOpen(false);
@@ -71,7 +76,10 @@ const DisplayTableStatus=()=>{
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
+        { 
+          floorPlan[0] === undefined? 
+          <Box sx={style}>   <ImageNotSupportedIcon/>    <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
+        </Box> : <Box sx={style}>
 
           {floorPlan.map((singleData, index) => {
             const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
@@ -84,6 +92,8 @@ const DisplayTableStatus=()=>{
           })}
           <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box>
+        }
+        
       </Modal>
       
     </>
