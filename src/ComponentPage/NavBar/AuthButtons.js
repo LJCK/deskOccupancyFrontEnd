@@ -9,7 +9,7 @@ const Buttons = () => {
   
   return (
     <div>
-      <Box sx={{display: 'flex','& > *': {m: 1,},}}>
+      <Box display='flex'>
         <Button sx={{ml:1}} variant="contained" component="label" style={{'color':'black','backgroundColor':'white'}} onClick={()=>navigate('/')}>
           Log Out
         </Button>
