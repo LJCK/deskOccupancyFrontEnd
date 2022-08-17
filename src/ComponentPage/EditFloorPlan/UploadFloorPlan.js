@@ -6,6 +6,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
 const UploadFloorPlan = ({locationState,levelState}) => {
@@ -13,7 +15,11 @@ const UploadFloorPlan = ({locationState,levelState}) => {
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   const [floorPlan, setFloorPlan]= useState({
-    "location":'', "level": '', "floorPlan": ''
+    "location":"", "level": "", "floorPlan": ""
+  })
+  const [open, setOpen] = useState(false)
+  const [alertText,setAlertText] = useState({
+    "text":"", "severity":"success"
   })
 
   // drag state
@@ -57,17 +63,39 @@ const UploadFloorPlan = ({locationState,levelState}) => {
     inputRef.current.click();
   };
 
-  const handleSubmit=()=>{
+  const handleSubmit=(e)=>{
+    e.preventDefault();
     const newFloorPlanObj = new FormData()
-    newFloorPlanObj.append('UID',`${locations[floorPlan['location']]}_${floorPlan['level']}`)
+    newFloorPlanObj.append('UID',`${floorPlan['location']}_${floorPlan['level']}`)
     newFloorPlanObj.append("file",floorPlan['floorPlan'])
     axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
       headers:{
         "Content-Type":"multipart/form-data"
       }
-    }).then((res)=>{alert(res.data)}).catch((error)=>{alert(error.response.data)})
-    setFloorPlan({"location":'', "level": '', "floorPlan": ''})
+    }).then((res)=>{
+      console.log(res)
+      setAlertText({["text"]:res.data.toString()})
+      handleOpen()
+      setFloorPlan({"location":'', "level": '', "floorPlan": ''})
+    }).catch((error)=>{
+      setAlertText({["text"]:error.response.data.toString(), ["severity"]:"error"})
+      handleOpen()
+      setFloorPlan({"location":'', "level": '', "floorPlan": ''})    
+    })
   }
+
+  
+ 
+  const handleOpen =()=>{
+    setOpen(true)
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const handleFormChange=(e)=>{
     e.preventDefault();
@@ -77,6 +105,7 @@ const UploadFloorPlan = ({locationState,levelState}) => {
 
   return (
     <div>
+      
       <form onSubmit={handleSubmit}>
         <Stack
           direction="row"
@@ -128,6 +157,11 @@ const UploadFloorPlan = ({locationState,levelState}) => {
           <Button type='submit' variant="outlined">Submit</Button>
         </Stack>
       </form>
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={alertText.severity} sx={{ width: '100%' }}>
+          {alertText.text}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

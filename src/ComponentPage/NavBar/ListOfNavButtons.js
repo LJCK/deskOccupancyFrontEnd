@@ -19,6 +19,7 @@ const ListOfNavButtons =({open})=>{
   let navigate = useNavigate();
 
   const [locations, setLocations] = useState(allLocations)
+  const [url,setUrl] = useState("")
   const [levels, setLevels] = useState([])
   const [locationAnchorEl, setLocationAnchorEl] = useState(null);
   const [levelAnchorEl, setLevelAnchorEl] = useState(null);
@@ -27,9 +28,9 @@ const ListOfNavButtons =({open})=>{
     setLocationAnchorEl(e.currentTarget);
   };
 
-  const showLevel = (event,location) => {
+  const showLevel = (event,location, id) => {
     setLevelAnchorEl(event.currentTarget)
-
+    setUrl(id)
     axios.get(`http://localhost:3001/desk/getAllLevels?location=${location}`).then((res)=>{setLevels(res.data)})
   }
 
@@ -39,7 +40,7 @@ const ListOfNavButtons =({open})=>{
   };
 
   const URLredirect =(level)=>{
-    navigate(`/level/${level}`);
+    navigate(`/${url}_${level}`);
     setLocationAnchorEl(null);
     setLevelAnchorEl(null)
   }
@@ -124,7 +125,7 @@ const ListOfNavButtons =({open})=>{
       }}
     >
       {locations.map((item,index)=>{
-        return <MenuItem key={index} onClick={event=>showLevel(event,item.location)}>{item.location}</MenuItem>
+        return <MenuItem key={index} onClick={event=>showLevel(event,item.location, item.id)}>{item.location}</MenuItem>
       })}
     </Popover>
 

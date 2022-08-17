@@ -28,7 +28,7 @@ const DisplayTableStatus=()=>{
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
-    axios.get(`http://localhost:3001/floorPlan/getImage?filename=l${id}_floor_plan`).then((res)=>{
+    axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}`).then((res)=>{
       if (res.data[0] === null){
         setFloorPlan([])
       }else{

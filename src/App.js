@@ -13,7 +13,7 @@ function App() {
         <SideBar/>
         <Routes>
           <Route exact path='/' element = {<Home/>}></Route>
-          <Route path='/level/:id' element = {<DisplayTableStatus/>}></Route>
+          <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
           <Route path='/editTable' element = {<EditTableList/>}></Route>
           <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>
         </Routes>
