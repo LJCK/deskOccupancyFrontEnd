@@ -17,6 +17,8 @@ const ShowAllTables = ({locationState}) => {
     { field: 'location', headerName: 'Location', width: 130 },
     { field: 'level', headerName: 'Level', width: 130 },
     { field: 'id', headerName: 'ID', width: 130 },
+    { field: 'edit', headerName: 'Edit', width: 130},
+    { field: 'delete', headerName: 'Delete', width: 130}
   ];
 
   const rows = [
@@ -32,7 +34,7 @@ const ShowAllTables = ({locationState}) => {
     
   },[])
   return (
-    <div style={{ height: 400, width:'30%', margin:"0 auto"}}>
+    <div style={{ height: 400, width:'50rem', margin:"0 auto"}}>
       <DataGrid
         rows={rows}
         columns={columns}
