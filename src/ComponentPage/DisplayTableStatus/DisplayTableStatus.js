@@ -20,7 +20,7 @@ const style = {
   textAlign: 'center'
 };
 
-const DisplayTableStatus=()=>{
+const DisplayTableStatus=({isSideBarOpen})=>{
 
   const [tableStatus,setTableStatus] = useState([])
   const [floorPlan,setFloorPlan] = useState([])

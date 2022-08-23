@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useContext, useEffect, useState } from 'react'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -15,8 +15,9 @@ import AuthButtons from './AuthButtons'
 import CssBaseline from '@mui/material/CssBaseline';
 import { useNavigate } from 'react-router-dom';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
+import { useCustemContext } from '../../Context/OnOffContext';
 
-const drawerWidth = 240;
+const drawerWidth = 200;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -85,21 +86,21 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const SideBar = () => {
   let navigate = useNavigate();
+  const {isSideBarOpen,setIsSideBarOpen} = useCustemContext()
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setIsSideBarOpen(true)
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setIsSideBarOpen(false)
   };
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} >
+      <AppBar position="fixed" open={isSideBarOpen} >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -108,7 +109,7 @@ export const SideBar = () => {
             edge="start"
             sx={{
               marginRight: 5,
-              ...(open && { display: 'none' }),
+              ...(isSideBarOpen && { display: 'none' }),
             }}
           >
             <MenuIcon />
@@ -121,7 +122,7 @@ export const SideBar = () => {
           <AuthButtons/>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={isSideBarOpen}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
