@@ -7,15 +7,19 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SensorsIcon from '@mui/icons-material/Sensors';
 import ImageIcon from '@mui/icons-material/Image';
 import Popover from '@mui/material/Popover';
+import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import allLocations from '../../Constants/locations.json'
 import { useNavigate } from 'react-router-dom';
 import LoginIcon from '@mui/icons-material/Login';
 import React,{useState} from 'react'
 import axios from 'axios'
+import { useTheme } from '@emotion/react';
+import { IconButton, useMediaQuery } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const ListOfNavButtons =()=>{
 
+const ListOfNavButtons =({config})=>{
   let navigate = useNavigate();
 
   const [locations, setLocations] = useState(allLocations)
@@ -36,7 +40,7 @@ const ListOfNavButtons =()=>{
 
   const handleClose = () => {
     setLocationAnchorEl(null);
-    setLevelAnchorEl(null)
+    setLevelAnchorEl(null);
   };
 
   const URLredirect =(level)=>{
@@ -50,14 +54,17 @@ const ListOfNavButtons =()=>{
   const locationID = locationOpen ? 'simple-popover' : undefined;
   const levelID = levelOpen ? 'simple-popover' : undefined;
 
+  // const theme = useTheme();
+  // const isMatch = useMediaQuery(theme.breakpoints.down('md'))
+  
+  
   return <div>
-    <List sx={{display:"flex", flexDirection:"row"}}>
+    <List sx={config} >
 
       {/* Location button */}
-      <ListItem disablePadding>
+      <ListItem >
         <ListItemButton sx={{
-              px: 0,
-              display:"flex", flexDirection:"row"
+              px: 0,display:"flex",flexDirection:"column"
             }} onClick={showLocation}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
@@ -69,36 +76,36 @@ const ListOfNavButtons =()=>{
       </ListItem>
 
       {/* Table sensor button */}
-      <ListItem disablePadding>
+      <ListItem  >
         <ListItemButton sx={{
-              px: 0,
+              px: 0,display:"flex",flexDirection:"column"
             }} onClick={()=>navigate('/editTable')}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
               }}>
             <SensorsIcon />
           </ListItemIcon>
-          <ListItemText primary="Table Sensor"  />
+          <ListItemText primary="Sensors"  />
         </ListItemButton>
       </ListItem>
 
       {/* Floor plan button */}
-      <ListItem disablePadding>
+      <ListItem >
         <ListItemButton sx={{
-              px: 0,
+              px: 0,display:"flex",flexDirection:"column"
             }} onClick={()=>navigate('/editFloorPlan')}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
               }}>
             <ImageIcon />
           </ListItemIcon>
-          <ListItemText primary="Floor Plan" />
+          <ListItemText primary="Plans" />
         </ListItemButton>
       </ListItem>
       
-      <ListItem disablePadding>
+      <ListItem >
         <ListItemButton sx={{
-              px: 0,
+              px: 0,display:"flex",flexDirection:"column"
             }} onClick={()=>navigate('/')}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
@@ -117,11 +124,11 @@ const ListOfNavButtons =()=>{
       onClose={handleClose}
       anchorOrigin={{
         vertical: 'bottom',
-        horizontal: 'center',
+        horizontal: 'right',
       }}
       transformOrigin={{
         vertical: 'top',
-        horizontal: 'center',
+        horizontal: 'right',
       }}
     >
       {locations.map((item,index)=>{

@@ -150,7 +150,7 @@ const UploadFloorPlan = ({locationState,levelState}) => {
             <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleUploadChange} name="floorPlan" required/>
             <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>
               <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}>
-                <button className="upload-button" onClick={onButtonClick}>Drag and drop your file here or Upload a file</button>
+                <button className="upload-button" onClick={onButtonClick}>Drag or Click to upload</button>
               </div> 
             </label>
           </FormControl>

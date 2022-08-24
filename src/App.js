@@ -6,9 +6,8 @@ import { TopBar } from "./ComponentPage/NavBar/TopBar";
 import {EditTableList} from "./ComponentPage/EditTableList/EditTableList"
 import {EditFloorPlan} from "./ComponentPage/EditFloorPlan/EditFloorPlan"
 import { createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from "@emotion/react";
-import {OnOffContextProvider} from "./Context/OnOffContext"
+import { CssBaseline } from "@mui/material";
 
 function App() {
   const theme = createTheme({
@@ -24,18 +23,18 @@ function App() {
   
   return (
     <ThemeProvider theme = {theme}>
-      <CssBaseline />
-      <Router>
-        <OnOffContextProvider >
-          <TopBar/>
-          <Routes>
-              <Route exact path='/' element = {<Home/>}></Route>
-              <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
-              <Route path='/editTable' element = {<EditTableList/>}></Route>
-              <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>
-          </Routes>
-        </OnOffContextProvider>
+      <CssBaseline/>
+      <Router >
+        <TopBar/>
+        <Routes>
+            <Route exact path='/' element = {<Home/>}></Route>
+            <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
+            <Route path='/editTable' element = {<EditTableList/>}></Route>
+            <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>
+        </Routes>
       </Router>
+  
+      
     </ThemeProvider>
   );
 }

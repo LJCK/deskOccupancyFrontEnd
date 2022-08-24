@@ -5,6 +5,7 @@ import ShowAllTables from './ShowAllTables';
 
 import allLocations from '../../Constants/locations.json'
 import allLevels from '../../Constants/levels.json'
+
 export const EditTableList = () => {
   
   const [locations,setLocations]= useState(allLocations)
@@ -30,7 +31,6 @@ export const EditTableList = () => {
           <ShowAllTables/>
         </Grid>
       </Grid>
-
     </div>
   )
 }
