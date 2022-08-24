@@ -10,11 +10,11 @@ import Popover from '@mui/material/Popover';
 import MenuItem from '@mui/material/MenuItem';
 import allLocations from '../../Constants/locations.json'
 import { useNavigate } from 'react-router-dom';
+import LoginIcon from '@mui/icons-material/Login';
 import React,{useState} from 'react'
 import axios from 'axios'
 
-
-const ListOfNavButtons =({open})=>{
+const ListOfNavButtons =()=>{
 
   let navigate = useNavigate();
 
@@ -51,63 +51,63 @@ const ListOfNavButtons =({open})=>{
   const levelID = levelOpen ? 'simple-popover' : undefined;
 
   return <div>
-    <List>
+    <List sx={{display:"flex", flexDirection:"row"}}>
 
       {/* Location button */}
       <ListItem disablePadding>
         <ListItemButton sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
+              px: 0,
+              display:"flex", flexDirection:"row"
             }} onClick={showLocation}>
           <ListItemIcon sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
                 justifyContent: 'center',
               }}>
             <LocationOnIcon />
           </ListItemIcon>
-          <ListItemText primary="Location" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText primary="Location" />
         </ListItemButton>
       </ListItem>
 
       {/* Table sensor button */}
       <ListItem disablePadding>
         <ListItemButton sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
+              px: 0,
             }} onClick={()=>navigate('/editTable')}>
           <ListItemIcon sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
                 justifyContent: 'center',
               }}>
             <SensorsIcon />
           </ListItemIcon>
-          <ListItemText primary="Table Sensor" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText primary="Table Sensor"  />
         </ListItemButton>
       </ListItem>
 
       {/* Floor plan button */}
       <ListItem disablePadding>
         <ListItemButton sx={{
-              minHeight: 48,
-              justifyContent: open ? 'initial' : 'center',
-              px: 2.5,
+              px: 0,
             }} onClick={()=>navigate('/editFloorPlan')}>
           <ListItemIcon sx={{
-                minWidth: 0,
-                mr: open ? 3 : 'auto',
                 justifyContent: 'center',
               }}>
             <ImageIcon />
           </ListItemIcon>
-          <ListItemText primary="Floor Plan" sx={{ opacity: open ? 1 : 0 }} />
+          <ListItemText primary="Floor Plan" />
         </ListItemButton>
-        
       </ListItem>
-
+      
+      <ListItem disablePadding>
+        <ListItemButton sx={{
+              px: 0,
+            }} onClick={()=>navigate('/')}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <LoginIcon />
+          </ListItemIcon>
+          <ListItemText primary="Log In" />
+        </ListItemButton>
+      </ListItem>
     </List>
 
     <Popover
@@ -116,12 +116,12 @@ const ListOfNavButtons =({open})=>{
       anchorEl={locationAnchorEl}
       onClose={handleClose}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: 'bottom',
+        horizontal: 'center',
       }}
       transformOrigin={{
         vertical: 'top',
-        horizontal: 'left',
+        horizontal: 'center',
       }}
     >
       {locations.map((item,index)=>{

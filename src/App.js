@@ -1,21 +1,33 @@
 import DisplayTableStatus from "./ComponentPage/DisplayTableStatus/DisplayTableStatus";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-
+import { green, purple } from '@mui/material/colors';
 import { Home } from "./ComponentPage/Home";
-import { SideBar } from "./ComponentPage/NavBar/SideBar";
+import { TopBar } from "./ComponentPage/NavBar/TopBar";
 import {EditTableList} from "./ComponentPage/EditTableList/EditTableList"
 import {EditFloorPlan} from "./ComponentPage/EditFloorPlan/EditFloorPlan"
-import { useState } from "react";
+import { createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from "@emotion/react";
 import {OnOffContextProvider} from "./Context/OnOffContext"
 
 function App() {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: green[500],
+      },
+      secondary: {
+        main: purple[500],
+      },
+    },
+  });
   
   return (
-    // <div style={{"marginLeft" : "5rem"}}>
-    <div>
+    <ThemeProvider theme = {theme}>
+      <CssBaseline />
       <Router>
         <OnOffContextProvider >
-          <SideBar/>
+          <TopBar/>
           <Routes>
               <Route exact path='/' element = {<Home/>}></Route>
               <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
@@ -24,8 +36,7 @@ function App() {
           </Routes>
         </OnOffContextProvider>
       </Router>
-      
-    </div>
+    </ThemeProvider>
   );
 }
 
