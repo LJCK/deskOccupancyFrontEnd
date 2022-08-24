@@ -50,7 +50,7 @@ const DisplayTableStatus=({isSideBarOpen})=>{
   },[id,reload])
 
   return (
-    <>
+    <div style={{paddingLeft:"1rem"}}>
     <Grid container spacing={2}>
       <Grid item xs={6} md={11}>
         <h1>Level {id}</h1>
@@ -96,7 +96,7 @@ const DisplayTableStatus=({isSideBarOpen})=>{
         
       </Modal>
       
-    </>
+    </div>
   )
 }
 

@@ -8,9 +8,10 @@ import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import axios from 'axios';
 
-const UploadFloorPlan = ({locationState,levelState}) => {
+const UploadFloorPlan = ({locationState,levelState, config}) => {
 
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
@@ -108,7 +109,7 @@ const UploadFloorPlan = ({locationState,levelState}) => {
       
       <form onSubmit={handleSubmit}>
         <Stack
-          direction="row"
+          direction={config}
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
         >
@@ -149,9 +150,9 @@ const UploadFloorPlan = ({locationState,levelState}) => {
           <FormControl fullWidth>
             <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleUploadChange} name="floorPlan" required/>
             <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>
-              <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}>
-                <button className="upload-button" onClick={onButtonClick}>Drag or Click to upload</button>
-              </div> 
+              <Box id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} sx={{p:2}}>
+                <a className="upload-button" onClick={onButtonClick} style={{textDecoration:"none"}}>Drag or Click to upload</a>
+              </Box> 
             </label>
           </FormControl>
           <Button type='submit' variant="outlined">Submit</Button>

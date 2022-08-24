@@ -14,10 +14,7 @@ function App() {
     palette: {
       primary: {
         main: green[500],
-      },
-      secondary: {
-        main: purple[500],
-      },
+      }
     },
   });
   
@@ -27,7 +24,7 @@ function App() {
       <Router >
         <TopBar/>
         <Routes>
-            <Route exact path='/' element = {<Home/>}></Route>
+            <Route exact path='/' element = {<Home />}></Route>
             <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
             <Route path='/editTable' element = {<EditTableList/>}></Route>
             <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>

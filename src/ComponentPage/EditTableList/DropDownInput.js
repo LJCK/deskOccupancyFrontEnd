@@ -10,8 +10,8 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import axios from 'axios';
 
-const DropDownInput = ({locationState,levelState}) => {
-  
+const DropDownInput = ({locationState,levelState, config}) => {
+
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   
@@ -42,7 +42,7 @@ const DropDownInput = ({locationState,levelState}) => {
     <Box sx={{ minWidth: 120 }}>
       <form onSubmit={handleSubmit}>
         <Stack
-          direction="row"
+          direction={config}
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
         >

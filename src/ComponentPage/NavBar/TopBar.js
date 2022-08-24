@@ -12,10 +12,11 @@ import NavButtonMobile from './NavButtonMobile';
 export const TopBar = () => {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
-  // const config = isMatch ? {display:"flex", flexDirection:"column"} : {display:"flex", flexDirection:"row"}
+
   return (
     <Box >
-      <AppBar position="static">
+      <AppBar position="static" >
+        
         <Toolbar>
           <a href="/"><AirlineSeatReclineNormalIcon fontSize="large"/></a>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
