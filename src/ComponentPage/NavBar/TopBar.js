@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListOfNavButtons from './ListOfNavButtons'
+
 import AuthButtons from './AuthButtons'
 import { useNavigate } from 'react-router-dom';
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
@@ -23,6 +23,7 @@ export const TopBar = () => {
   
 
   return (
+    <div>
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed" open={isSideBarOpen} >
         <Toolbar>
@@ -32,10 +33,10 @@ export const TopBar = () => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Bum Go Where
           </Typography>
-          <ListOfNavButtons />
         </Toolbar>
       </AppBar>
       
     </Box>
+    </div>
   );
 }

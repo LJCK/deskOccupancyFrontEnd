@@ -50,9 +50,8 @@ const ListOfNavButtons =()=>{
   const locationID = locationOpen ? 'simple-popover' : undefined;
   const levelID = levelOpen ? 'simple-popover' : undefined;
 
-  return <div>
-    <List sx={{display:"flex", flexDirection:"row"}}>
-
+  return <div style={{width:"167px", maxWidth:"167px", minWidth:"167px", marginTop:"60px"}}>
+    <List sx={{display:"flex", flexDirection:"column"}}>
       {/* Location button */}
       <ListItem disablePadding>
         <ListItemButton sx={{

@@ -9,6 +9,7 @@ import { createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from "@emotion/react";
 import {OnOffContextProvider} from "./Context/OnOffContext"
+import ListOfNavButtons from './ComponentPage/NavBar/ListOfNavButtons'
 
 function App() {
   const theme = createTheme({
@@ -27,13 +28,17 @@ function App() {
       <CssBaseline />
       <Router>
         <OnOffContextProvider >
-          <TopBar/>
+          <div style={{display:"flex"}}>
+          <TopBar />
+          <ListOfNavButtons/>
           <Routes>
               <Route exact path='/' element = {<Home/>}></Route>
               <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
               <Route path='/editTable' element = {<EditTableList/>}></Route>
               <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>
           </Routes>
+          </div>
+          
         </OnOffContextProvider>
       </Router>
     </ThemeProvider>
