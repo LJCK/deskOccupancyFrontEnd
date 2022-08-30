@@ -9,16 +9,12 @@ import allLevels from '../../Constants/levels.json'
 
 export const EditTableList = () => {
   
-
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
   const config = isMatch? "column":"row"
   const [locations,setLocations]= useState(allLocations)
   const [levels,setLevels] = useState(allLevels)
   
-  const handleUpdate=(e)=>{
-    e.preventDefault()
-  }
   return (
     <div style={{paddingLeft:"1rem"}}>
       <Grid container spacing={2}>
@@ -28,7 +24,6 @@ export const EditTableList = () => {
         <Grid item xs={11}>
           <DropDownInput locationState={locations} levelState={levels} config={config}/>
         </Grid>
-
         <Grid item xs={12}>
           <h1>Existing Tables</h1>
         </Grid>

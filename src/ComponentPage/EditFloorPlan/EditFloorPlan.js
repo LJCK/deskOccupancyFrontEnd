@@ -15,14 +15,14 @@ export const EditFloorPlan = () => {
 
   const [locations,setLocations]= useState(allLocations)
   const [levels,setLevels] = useState(allLevels)
-  
 
   return (
     <div style={{paddingLeft:"1rem"}}>
       <Grid container spacing={2}>
-      <Grid item xs={11}>
+        <Grid item xs={11}>
           <h1>Upload Floor Plan</h1>
         </Grid>
+        
         <Grid item xs={11}>
           <UploadFloorPlan locationState={locations} levelState={levels} config={config}/>
         </Grid>
