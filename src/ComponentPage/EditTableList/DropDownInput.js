@@ -9,11 +9,12 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import Alert from '@mui/material/Alert';
+import {useSnackbar} from "notistack"
 import axios from 'axios';
 
 const DropDownInput = ({locationState,levelState, config}) => {
 
+  const { enqueueSnackbar } = useSnackbar();
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   const [showForm, setShowForm] = useState(false)
@@ -27,16 +28,19 @@ const DropDownInput = ({locationState,levelState, config}) => {
   };
 
   const enableForm=()=>{
-    
+    customAlert("Trying to connect the IoT Hub, please be patient", 'info')
     axios.post("http://localhost:3001/desk/permitJoin").then((res)=>{
-    if(res.status == 200){
+    if(res.status === 200){
       setShowForm(true)
-      alert(res.data)
+      customAlert("(2)Press and hold the button on the sensor until the blinking light stops", 'info')
+      customAlert("(1)You need to be physically beside the IoT Hub.", 'info')
+      customAlert("You may now pair your device, please follow the following steps.", 'info')
     }
-    })
+    }).catch(error=>{customAlert(error.response.data,"error")})
   }
 
-  const handleSubmit=()=>{
+  const handleSubmit=(e)=>{
+    e.preventDefault()
     let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
     let location = newDesk['location']
     const newDeskObj = {
@@ -46,18 +50,21 @@ const DropDownInput = ({locationState,levelState, config}) => {
       level: newDesk['level']
     }
     axios.post("http://localhost:3001/desk/pairDevice", newDeskObj).then((res)=>{
-      if(res.status == 200){
-        setShowForm(false)
-        alert(res.data)
+      if(res.status === 200){
+        customAlert(res.data,"success")
       }
-    }).catch((error)=>{alert(error.response.data)})
-    console.log(newDeskObj)
+    }).catch((error)=>{customAlert(error.response.data, "error")})
     setNewDesk({"location":'', "level": '', "id": ''})
+    setShowForm(false)
+  }
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
   }
 
   return (
     <Box sx={{ minWidth: 120 }}>
-      <Alert onClose={() => {}}>This is a success alert — check it out!</Alert>
+      
       <form onSubmit={handleSubmit}>
         <Stack
           direction={config}
@@ -76,8 +83,8 @@ const DropDownInput = ({locationState,levelState, config}) => {
               required
               disabled={!showForm}
             >
-            {locations.map((location, index)=>{
-              return <MenuItem key={index} value={location.id}>{location.location}</MenuItem>
+            {Object.keys(locations).map((key, index)=>{
+              return <MenuItem key={index} value={key}>{key}</MenuItem>
             })}
             </Select>
           </FormControl>
@@ -119,8 +126,7 @@ const DropDownInput = ({locationState,levelState, config}) => {
       checked={showForm}
       onChange={enableForm}
       inputProps={{ 'aria-label': 'controlled' }}
-      
-    />add device
+      />add device
     </Box>
   )
 }

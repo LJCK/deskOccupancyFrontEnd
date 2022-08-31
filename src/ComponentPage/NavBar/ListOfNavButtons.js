@@ -7,16 +7,13 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SensorsIcon from '@mui/icons-material/Sensors';
 import ImageIcon from '@mui/icons-material/Image';
 import Popover from '@mui/material/Popover';
-import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import allLocations from '../../Constants/locations.json'
 import { useNavigate } from 'react-router-dom';
 import LoginIcon from '@mui/icons-material/Login';
 import React,{useState} from 'react'
 import axios from 'axios'
-import { useTheme } from '@emotion/react';
-import { IconButton, useMediaQuery } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+
 
 
 const ListOfNavButtons =({config})=>{
@@ -131,8 +128,8 @@ const ListOfNavButtons =({config})=>{
         horizontal: 'right',
       }}
     >
-      {locations.map((item,index)=>{
-        return <MenuItem key={index} onClick={event=>showLevel(event,item.location, item.id)}>{item.location}</MenuItem>
+      {Object.keys(locations).map((key,index)=>{
+        return <MenuItem key={index} onClick={event=>showLevel(event,key,locations[key])}>{key}</MenuItem>
       })}
     </Popover>
 
