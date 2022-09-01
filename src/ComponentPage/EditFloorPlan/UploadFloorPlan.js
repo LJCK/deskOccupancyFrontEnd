@@ -67,7 +67,9 @@ const UploadFloorPlan = ({locationState,levelState, config}) => {
   const handleSubmit=(e)=>{
     e.preventDefault();
     const newFloorPlanObj = new FormData()
-    newFloorPlanObj.append('UID',`${floorPlan['location']}_${floorPlan['level']}`)
+    // example of id: nva_8_floor_plan. Novena Tower A, level 8.
+    let id = `${locations[floorPlan['location']]}_${floorPlan['level']}_floor_plan`
+    newFloorPlanObj.append('UID',id)
     newFloorPlanObj.append("file",floorPlan['floorPlan'])
     axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
       headers:{
@@ -124,8 +126,8 @@ const UploadFloorPlan = ({locationState,levelState, config}) => {
               onChange={handleFormChange}
               required
             >
-            {locations.map((location, index)=>{
-              return <MenuItem key={index} value={location.id}>{location.location}</MenuItem>
+            {Object.keys(locations).map((key, index)=>{
+              return <MenuItem key={index} value={key}>{key}</MenuItem>
             })}
             </Select>
           </FormControl>

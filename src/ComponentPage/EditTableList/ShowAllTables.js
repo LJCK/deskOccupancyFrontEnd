@@ -34,13 +34,14 @@ const ShowAllTables = ({locationState}) => {
     
   },[])
   return (
-    <div >
-      {/* <DataGrid
+    <div style={{ height: 300, width: '100%' }}>
+      <DataGrid
         rows={rows}
         columns={columns}
         pageSize={5}
         rowsPerPageOptions={[5]}
-      /> */}
+      />
+      test
     </div>
   )
 }
