@@ -39,6 +39,18 @@ const DropDownInput = ({locationState,levelState, config}) => {
     }).catch(error=>{customAlert(error.response.data,"error")})
   }
 
+  // const enableForm=()=>{
+  //   customAlert("Trying to connect the IoT Hub, please be patient", 'info')
+  //   axios.post("http://localhost:3001/desk/permitJoin").then((res)=>{
+  //   if(res.status === 200){
+  //     setShowForm(true)
+  //     customAlert("(2)Press and hold the button on the sensor until the blinking light stops", 'info')
+  //     customAlert("(1)You need to be physically beside the IoT Hub.", 'info')
+  //     customAlert("You may now pair your device, please follow the following steps.", 'info')
+  //   }
+  //   }).catch(error=>{customAlert(error.response.data,"error")})
+  // }
+
   const handleSubmit=(e)=>{
     e.preventDefault()
     let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
@@ -49,7 +61,7 @@ const DropDownInput = ({locationState,levelState, config}) => {
       locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
       level: newDesk['level']
     }
-    axios.post("http://localhost:3001/desk/pairDevice", newDeskObj).then((res)=>{
+    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
       }
