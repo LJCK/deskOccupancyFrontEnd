@@ -6,12 +6,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import axios from 'axios';
 
-const UploadFloorPlan = ({locationState,levelState, config}) => {
+const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, config}) => {
 
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
@@ -70,35 +68,22 @@ const UploadFloorPlan = ({locationState,levelState, config}) => {
     // example of id: nva_8_floor_plan. Novena Tower A, level 8.
     let id = `${locations[floorPlan['location']]}_${floorPlan['level']}_floor_plan`
     newFloorPlanObj.append('UID',id)
+    newFloorPlanObj.append('location',floorPlan['location'])
+    newFloorPlanObj.append('level',floorPlan['level'])
     newFloorPlanObj.append("file",floorPlan['floorPlan'])
     axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
       headers:{
         "Content-Type":"multipart/form-data"
       }
     }).then((res)=>{
-      console.log(res)
-      setAlertText({["text"]:res.data.toString()})
-      handleOpen()
+      console.log(res.data)
+      setRerender(!rerender)
       setFloorPlan({"location":'', "level": '', "floorPlan": ''})
     }).catch((error)=>{
-      setAlertText({["text"]:error.response.data.toString(), ["severity"]:"error"})
-      handleOpen()
+      console.log(error.response.data.toString())
       setFloorPlan({"location":'', "level": '', "floorPlan": ''})    
     })
   }
-
-  
- 
-  const handleOpen =()=>{
-    setOpen(true)
-  }
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setOpen(false);
-  };
 
   const handleFormChange=(e)=>{
     e.preventDefault();
@@ -160,11 +145,6 @@ const UploadFloorPlan = ({locationState,levelState, config}) => {
           <Button type='submit' variant="outlined">Submit</Button>
         </Stack>
       </form>
-      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={alertText.severity} sx={{ width: '100%' }}>
-          {alertText.text}
-        </Alert>
-      </Snackbar>
     </div>
   )
 }

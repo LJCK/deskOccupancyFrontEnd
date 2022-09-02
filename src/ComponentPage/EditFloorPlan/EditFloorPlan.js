@@ -13,24 +13,25 @@ export const EditFloorPlan = () => {
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
   const config = isMatch? "column":"row"
 
+  const [rerender, setRerender] = useState(false)
   const [locations,setLocations]= useState(allLocations)
   const [levels,setLevels] = useState(allLevels)
 
   return (
-    <div style={{paddingLeft:"1rem"}}>
-      <Grid container spacing={2}>
+    <div>
+      <Grid container justifyContent="center">
         <Grid item xs={11}>
           <h1>Upload Floor Plan</h1>
         </Grid>
         
         <Grid item xs={11}>
-          <UploadFloorPlan locationState={locations} levelState={levels} config={config}/>
+          <UploadFloorPlan locationState={locations} levelState={levels} rerender={rerender} setRerender={setRerender} config={config}/>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={11}>
           <h1>Existing Floor Plans</h1>
         </Grid>
-        <Grid item xs={12}>
-          <ShowAllFloorPlans/>
+        <Grid item xs={11}>
+          <ShowAllFloorPlans rerender={rerender} setRerender={setRerender}  />
         </Grid>
       </Grid>
     </div>
