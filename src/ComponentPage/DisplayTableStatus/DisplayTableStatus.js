@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import ImageIcon from '@mui/icons-material/Image';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import { red, green } from '@mui/material/colors';
 import axios from 'axios'
 import { Box } from "@mui/material";
@@ -45,25 +48,21 @@ const DisplayTableStatus=({isSideBarOpen})=>{
 
   useEffect(()=>{
     axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
-      setTableStatus(res.data)
+    console.log(res.data)  
+    setTableStatus(res.data)
     })
   },[id,reload])
 
   return (
-    <div style={{paddingLeft:"1rem"}}>
-    <Grid container spacing={2}>
-      <Grid item xs={6} md={11}>
+    <div>
+    <Grid  container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent={"center"}>
+      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
         <h1>Level {id}</h1>
       </Grid>
-      <Grid item xs={6} md={1} sx={{mr:-5}}>
-        <ImageIcon fontSize="large" sx={{mt:3}} onClick={handleOpen} style={{position:"fixed", right:"1%"}}/>
-      </Grid>
-    </Grid>
-    
-    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+      
       {tableStatus.map((item,index)=>{
-        return <Grid item xs={2} sm={4} md={4} key={index}>
-          {item[item.id] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
+        return <Grid item xs={6} sm={4} md={3} key={index} component={Paper}>
+          {item["status"] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
           
           <h3>Table: {item.id}</h3>
           <h3>Expiry Time: {item.expiryTime}</h3>
@@ -95,7 +94,13 @@ const DisplayTableStatus=({isSideBarOpen})=>{
         }
         
       </Modal>
-      
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<ImageIcon />}
+        onClick = {handleOpen}
+      >
+      </SpeedDial>
     </div>
   )
 }
