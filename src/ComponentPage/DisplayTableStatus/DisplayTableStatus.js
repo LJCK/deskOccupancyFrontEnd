@@ -48,8 +48,8 @@ const DisplayTableStatus=({isSideBarOpen})=>{
 
   useEffect(()=>{
     axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
-    console.log(res.data)  
-    setTableStatus(res.data)
+    console.log(res.data.desks)  
+    setTableStatus(res.data.desks)
     })
   },[id,reload])
 
@@ -64,7 +64,7 @@ const DisplayTableStatus=({isSideBarOpen})=>{
         return <Grid item xs={6} sm={4} md={3} key={index} component={Paper}>
           {item["status"] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
           
-          <h3>Table: {item.id}</h3>
+          <h3>Table: {item.deskID}</h3>
           <h3>Expiry Time: {item.expiryTime}</h3>
         </Grid>
       })}
