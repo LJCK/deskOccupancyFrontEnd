@@ -27,53 +27,66 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
 
   const handleSubmit=(e)=>{
     e.preventDefault()
-    // example of id: nva_8_1. Novena Tower A, level 8, table 1.
-    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
-    let location = newDesk['location']
 
     customAlert("Trying to connect to the IoT hub.","info")
+    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    mqttClient.on('message', messageCallBack)
 
-    const newDeskObj = {
-      deskID:id,
-      location: location,
-      locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
-      level: newDesk['level']
-    }
-    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
-      if(res.status === 200){
-        customAlert(res.data,"success")
-        pairDevice(id)
-        }
-      }).catch((error)=>{customAlert(error.response, "error")})
-      setNewDesk({"location":'', "level": '', "id": ''})
+    console.log("listener is up and running.")
+    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
   }
 
   const customAlert=(message,variant)=>{
     enqueueSnackbar(message, {variant})
   }
 
-  const pairDevice=(id)=>{
-    mqttClient.removeAllListeners("message")
-    mqttClient.on('message', (topic, payload) => {
-      const msg = JSON.parse(payload.toString());
-      if (topic == "zigbee2mqtt/bridge/event" && msg.type == "device_interview") {
-        switch (msg.data.status) {
-          case "started":
-            customAlert(`${id} Device interview commencing. Please wait...`, "success")
-            break;
-          case "failed":
-            customAlert("Pairing fail", "error")
-            break;
-          case "successful": //on pairing...
-            let friendly_name = msg.data.friendly_name;
-            mqttClient.publish("zigbee2mqtt/bridge/request/device/rename", `{ "from": "${friendly_name}", "to": "devices/${id}" }`)
-            customAlert(`Device ${id} rename success`, "success")
-            setRerender(!rerender)
-            break;
+  function updateDB(){
+    console.log("new desk ", newDesk)
+    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
+    const newDeskObj = {
+      deskID:id,
+      location: newDesk['location'],
+      locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
+      level: newDesk['level']
+    }
+
+    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
+      if(res.status === 200){
+        customAlert(res.data,"success")
+        setRerender(!rerender)
         }
-      } 
-    });
+      }).catch((error)=>{customAlert(error.response, "error")})
+      setNewDesk({"location":'', "level": '', "id": ''})
   }
+  
+  function messageCallBack (topic, payload) {
+    const msg = JSON.parse(payload.toString());
+    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
+
+    if (topic === "zigbee2mqtt/bridge/event" && msg.type === "device_interview") {
+      switch (msg.data.status) {
+        case "started":
+          customAlert(`Device interview commencing. Please wait...`, "success")
+          break;
+        case "failed":
+          customAlert("Pairing fail", "error")
+          break;
+        case "successful": //on pairing...
+          updateDB()
+          let friendly_name = msg.data.friendly_name;
+          mqttClient.publish("zigbee2mqtt/bridge/request/device/rename", `{ "from": "${friendly_name}", "to": "devices/${id}" }`) 
+          customAlert(`Device ${id} rename success`, "success")
+          mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": false }');
+          mqttClient.removeAllListeners("message")
+          break;
+        default:
+          mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": false }');
+          mqttClient.removeAllListeners("message")
+          break;
+
+      }
+    }
+  };
 
   return (
     <Box>

@@ -16,9 +16,7 @@ const NavButtonMobile = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const ID = open ? 'simple-popover' : undefined;
   
-
   return (
     <div>
       <IconButton

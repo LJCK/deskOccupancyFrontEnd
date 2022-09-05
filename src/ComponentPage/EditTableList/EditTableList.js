@@ -50,7 +50,6 @@ AWS.config.credentials.get((err) => {
 
 mqttClient.on('connect', () => {
   console.log('mqttClient connected')
-  mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
   mqttClient.subscribe('zigbee2mqtt/bridge/event')
 });
 

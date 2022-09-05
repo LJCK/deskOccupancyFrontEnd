@@ -16,11 +16,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
   const [floorPlan, setFloorPlan]= useState({
     "location":"", "level": "", "floorPlan": ""
   })
-  const [open, setOpen] = useState(false)
-  const [alertText,setAlertText] = useState({
-    "text":"", "severity":"success"
-  })
-
+  
   // drag state
   const [dragActive, setDragActive] = useState(false);
   // ref
@@ -44,16 +40,14 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.dataTransfer.files[0]})
-      console.log(floorPlan)
     }
   };
-
+  console.log(floorPlan["floorPlan"]["name"])
   // triggers when file is selected with click
   const handleUploadChange = (e)=>{
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.target.files[0]})
-      console.log(floorPlan)
     }
   };
 
@@ -138,7 +132,10 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
             <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleUploadChange} name="floorPlan" required/>
             <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>
               <Box id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} sx={{p:2}}>
-                <a className="upload-button" onClick={onButtonClick} style={{textDecoration:"none"}}>Drag or Click to upload</a>
+                {floorPlan["floorPlan"]["name"]? 
+                <p>{floorPlan["floorPlan"]["name"]}</p> :<a className="upload-button" onClick={()=>onButtonClick} style={{textDecoration:"none"}}>Drag or Click to upload</a>
+                
+                }
               </Box> 
             </label>
           </FormControl>
