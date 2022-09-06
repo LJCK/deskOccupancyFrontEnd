@@ -11,6 +11,56 @@ import { Box } from "@mui/material";
 import Modal from '@mui/material/Modal';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
+const AWS = require("aws-sdk");
+const AWSIoTData = require('aws-iot-device-sdk');
+
+let awsConfig = {
+  identityPoolId: "ap-southeast-1:f187afe2-9cd1-4678-9dc2-9ab7d0b98589",
+  mqttEndpoint: "a2x864rhawhdg9-ats.iot.ap-southeast-1.amazonaws.com",
+  region: "ap-southeast-1",
+  clientId: "5ais045mjjoctk8vcmknkpq85t",
+  userPoolId: "ap-southeast-1_PXBqmAstk"
+};
+
+const mqttClient = AWSIoTData.device({
+  region: awsConfig.region,
+  host: awsConfig.mqttEndpoint,
+  clientId: awsConfig.clientId,
+  protocol: 'wss',
+  maximumReconnectTimeMs: 8000,
+  debug: false,
+  accessKeyId: '',
+  secretKey: '',
+  sessionToken: ''
+});
+
+AWS.config.region = awsConfig.region;
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+  IdentityPoolId: awsConfig.identityPoolId
+});
+
+AWS.config.credentials.get((err) => {
+  if (err) {
+      console.log(AWS.config.credentials);
+      throw err;
+  } else {
+      mqttClient.updateWebSocketCredentials(
+          AWS.config.credentials.accessKeyId,
+          AWS.config.credentials.secretAccessKey,
+          AWS.config.credentials.sessionToken
+      );
+  }
+});
+
+mqttClient.on('connect', () => {
+  console.log('mqttClient connected')
+  mqttClient.subscribe('zigbee2mqtt/bridge/event')
+});
+
+mqttClient.on('error', (err) => {
+  console.log('mqttClient error:', err)
+});
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -22,7 +72,7 @@ const style = {
   textAlign: 'center'
 };
 
-const DisplayTableStatus=({isSideBarOpen})=>{
+const DisplayTableStatus=()=>{
 
   const [tableStatus,setTableStatus] = useState([])
   const [occupencyRatio, setOccupencyRatio] = useState()
@@ -47,12 +97,12 @@ const DisplayTableStatus=({isSideBarOpen})=>{
     setReload(!reload)
   }, 60000);
 
-  useEffect(()=>{
-    axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
-    setOccupencyRatio(res.data.occupencyRatio)  
-    setTableStatus(res.data.tables.desks)
-    })
-  },[id,reload])
+  // useEffect(()=>{
+  //   axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
+  //   setOccupencyRatio(res.data.occupencyRatio)  
+  //   setTableStatus(res.data.tables.desks)
+  //   })
+  // },[id,reload])
 
   return (
     <div>
