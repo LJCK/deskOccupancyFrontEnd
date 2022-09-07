@@ -42,7 +42,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
       setFloorPlan({...floorPlan,['floorPlan']:e.dataTransfer.files[0]})
     }
   };
-  console.log(floorPlan["floorPlan"]["name"])
+  
   // triggers when file is selected with click
   const handleUploadChange = (e)=>{
     e.preventDefault();

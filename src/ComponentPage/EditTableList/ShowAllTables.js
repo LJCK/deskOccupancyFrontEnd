@@ -49,12 +49,12 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
       <TableBody>
         {allSensors.map((oneLevel)=>{
-          return oneLevel.desks.map((oneDesk)=>{
-            return <TableRow key={oneDesk['deskID']}>
+          return Object.keys(oneLevel.desks).map((oneDesk)=>{
+            return <TableRow key={oneDesk}>
               <TableCell>{oneLevel['location']}</TableCell>
               <TableCell align="right">{oneLevel['level']}</TableCell>
-              <TableCell align="right">{oneDesk['deskID']}</TableCell>
-              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk['deskID'])}>Delete</Button></TableCell>
+              <TableCell align="right">{oneDesk}</TableCell>
+              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk)}>Delete</Button></TableCell>
             </TableRow>
           })
         })}
