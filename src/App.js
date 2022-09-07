@@ -55,7 +55,8 @@ AWS.config.credentials.get((err) => {
 mqttClient.on('connect', () => {
   console.log('mqttClient connected')
   mqttClient.subscribe('zigbee2mqtt/bridge/event')
-  mqttClient.subscribe('bumGoWhere/frontend/update')
+  mqttClient.subscribe('bumGoWhere/frontend/update/#')
+  console.log("subscribed to zigbee2mqtt/bridge/event and bumGoWhere/frontend/update/#")
   // mqttClient.on("message", messageCallBack)
 });
 
@@ -73,6 +74,7 @@ mqttClient.on('error', (err) => {
 });
 
 function App() {
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -80,13 +82,13 @@ function App() {
       }
     },
   });
-  
+
   return (
     <SnackbarProvider maxSnack={5}>
       <ThemeProvider theme = {theme}>
         <CssBaseline/>
         <Router >
-          <TopBar/>
+          <TopBar mqttClient={mqttClient}/>
           <Routes>
               <Route exact path='/' element = {<Home />}></Route>
               <Route path='/:id' element = {<DisplayTableStatus mqttClient={mqttClient}/>}></Route>

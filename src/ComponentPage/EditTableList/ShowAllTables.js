@@ -49,8 +49,12 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
       <TableBody>
         {allSensors.map((oneLevel)=>{
-          return Object.keys(oneLevel.desks).map((oneDesk)=>{
-            return <TableRow key={oneDesk}>
+          if(!oneLevel.desks){
+            // return if oneLevel.desks is undefined
+            return
+          }
+          return Object.keys(oneLevel.desks).map((oneDesk,index)=>{
+            return <TableRow key={index}>
               <TableCell>{oneLevel['location']}</TableCell>
               <TableCell align="right">{oneLevel['level']}</TableCell>
               <TableCell align="right">{oneDesk}</TableCell>

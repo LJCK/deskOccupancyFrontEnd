@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -22,13 +22,13 @@ const style = {
   textAlign: 'center'
 };
 
-const DisplayTableStatus=(tableObjs)=>{
-  console.log(tableObjs)
+const DisplayTableStatus=({mqttClient})=>{
   const [tableStatus,setTableStatus] = useState([])
   const [occupencyRatio, setOccupencyRatio] = useState()
   const [floorPlan,setFloorPlan] = useState([])
   const [reload, setReload] = useState(false)
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
+
   const handleOpen = () => {
     setOpen(true);
     axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}`).then((res)=>{
@@ -43,9 +43,20 @@ const DisplayTableStatus=(tableObjs)=>{
 
   const { id } = useParams()
   
-  setTimeout(function() {
-    setReload(!reload)
-  }, 60000);
+  // setTimeout(function() {
+  //   setReload(!reload)
+  // }, 60000);
+
+  useEffect(()=>{
+    mqttClient.on('message', messageCallBack)
+    function messageCallBack (topic,message){
+      if(topic === `bumGoWhere/frontend/update/${id}`){
+        const payload = JSON.parse(message)
+        setOccupencyRatio(payload.occupencyRatio)  
+        setTableStatus(payload.tables.desks)
+      }
+    }
+  },[])
 
   // useEffect(()=>{
   //   axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
@@ -59,7 +70,7 @@ const DisplayTableStatus=(tableObjs)=>{
     <Grid  container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent={"center"}>
       <Grid item xs={11} >
         <h1>Level {id.split("_").at(-1)}</h1>
-        <h5>{occupencyRatio +"% occupied" }</h5>
+        <h5>{occupencyRatio}</h5>
       </Grid>
       
       {tableStatus.map((item,index)=>{

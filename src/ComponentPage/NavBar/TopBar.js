@@ -1,4 +1,5 @@
-import React from 'react'
+import React, {useEffect} from 'react'
+import {useLocation} from "react-router-dom"
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,10 +10,16 @@ import { useMediaQuery } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import NavButtonMobile from './NavButtonMobile';
 
-export const TopBar = () => {
+export const TopBar = ({mqttClient}) => {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
+  const location = useLocation()
 
+  useEffect(()=>{
+    console.log("URL changed")
+    mqttClient.removeAllListeners('message')
+    console.log("removed all listeners")
+  }, [location])
   return (
     <Box >
       <AppBar position="static" >
