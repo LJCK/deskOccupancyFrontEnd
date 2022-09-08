@@ -8,7 +8,7 @@ import allLocations from '../../Constants/locations.json'
 import allLevels from '../../Constants/levels.json'
 
 
-export const EditTableList = (mqttClient) => {
+export const EditTableList = ({mqttClient}) => {
 
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
@@ -21,13 +21,13 @@ export const EditTableList = (mqttClient) => {
     <div>
       <Grid container justifyContent="center">
         <Grid item xs={11}>
-          <h1>Add Table</h1>
+          <h1>Add Sensors</h1>
         </Grid>
         <Grid item xs={11}>
           <DropDownInput locationState={locations} levelState={levels} mqttClient={mqttClient} rerender={rerender} setRerender={setRerender} config={config}/>
         </Grid>
         <Grid item xs={11}>
-          <h1>Existing Tables</h1>
+          <h1>Existing Sensors</h1>
         </Grid>
         <Grid item xs={11}>
           <ShowAllTables mqttClient={mqttClient} rerender={rerender} setRerender={setRerender}/>

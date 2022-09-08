@@ -17,7 +17,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   const [newDesk, setNewDesk]= useState({
-    "location":'', "level": '', "id": ''
+    "location":'', "level": '', "id": '', "sensorType":''
   })
 
   const handleChange = (e) => {
@@ -42,12 +42,13 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
 
   function updateDB(){
     console.log("new desk ", newDesk)
-    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
+    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
     const newDeskObj = {
       deskID:id,
       location: newDesk['location'],
       locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
-      level: newDesk['level']
+      level: newDesk['level'],
+      sensorType: newDesk['sensorType']
     }
 
     axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
@@ -61,7 +62,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   
   function messageCallBack (topic, payload) {
     const msg = JSON.parse(payload.toString());
-    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
+    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
 
     if (topic === "zigbee2mqtt/bridge/event" && msg.type === "device_interview") {
       switch (msg.data.status) {
@@ -132,11 +133,27 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
           </FormControl>
 
           <FormControl fullWidth >
+            <InputLabel id="demo-simple-select-label">Sensor Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={newDesk.sensorType}
+              name="sensorType"
+              label="Sensor Type"
+              onChange={handleChange}
+              required
+            >
+            <MenuItem value={"vibration"}>Vibration</MenuItem>
+            <MenuItem value={"other"}>Other</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth >
             <TextField
               required
               id="outlined-required"
               name="id"
-              label="Table ID"
+              label="Sensor ID"
               value={newDesk.id}
               onChange={handleChange}
             />

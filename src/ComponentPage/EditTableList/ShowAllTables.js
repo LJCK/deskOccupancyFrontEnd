@@ -16,6 +16,12 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const removeDevice=(deskID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
     mqttClient.publish("zigbee2mqtt/bridge/request/device/remove", `{ "id": "devices/${deskID}", "force":true}`)
+    // mqttClient.subscribe("zigbee2mqtt/bridge/request/device/remove")
+    // mqttClient.on("message", function(topic, message){
+    //   if (topic =="zigbee2mqtt/bridge/request/device/remove"){
+    //     console.log("remove success, message: ", JSON.parse(message))
+    //   }
+    // })
   }
 
   const handleDelete=(e, locationID, deskID)=>{

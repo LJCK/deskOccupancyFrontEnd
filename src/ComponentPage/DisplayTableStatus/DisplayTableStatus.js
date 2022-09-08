@@ -23,7 +23,7 @@ const style = {
 };
 
 const DisplayTableStatus=({mqttClient})=>{
-  const [tableStatus,setTableStatus] = useState([])
+  const [tableStatus,setTableStatus] = useState({})
   const [occupencyRatio, setOccupencyRatio] = useState()
   const [floorPlan,setFloorPlan] = useState([])
   const [reload, setReload] = useState(false)
@@ -52,10 +52,18 @@ const DisplayTableStatus=({mqttClient})=>{
     function messageCallBack (topic,message){
       if(topic === `bumGoWhere/frontend/update/${id}`){
         const payload = JSON.parse(message)
+        console.log(payload)
         setOccupencyRatio(payload.occupencyRatio)  
         setTableStatus(payload.tables.desks)
       }
     }
+
+    axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
+    setOccupencyRatio(res.data.occupencyRatio) 
+    if(res.data.tables.desks){
+      setTableStatus(res.data.tables.desks)
+    } 
+    })
   },[])
 
   // useEffect(()=>{
@@ -73,13 +81,17 @@ const DisplayTableStatus=({mqttClient})=>{
         <h5>{occupencyRatio}</h5>
       </Grid>
       
-      {tableStatus.map((item,index)=>{
+      {Object.keys(tableStatus).map((item,index)=>{
+        if(tableStatus[item]["sensorType"] != "vibration"){
+          return
+        }
+
         return <Grid item xs={6} sm={4} md={3} key={index} component={Paper} >
-          {item["status"] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
+          {tableStatus[item]["status"] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
           
-          <h3>Table: {item.deskID.split("_").at(-1)}</h3>
+          <h3>Table: {tableStatus[item]["deskID"].split("_").at(-1)}</h3>
           
-          <h3>Status: {item.status}</h3>
+          <h3>Status: {tableStatus[item]["status"]}</h3>
         </Grid>
       })}
     </Grid>
