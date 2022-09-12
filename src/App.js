@@ -9,6 +9,8 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
+import Login from './ComponentPage/Login/Login'
+import Signup from './ComponentPage/Login/Signup'
 
 function App() {
   const theme = createTheme({
@@ -30,6 +32,8 @@ function App() {
               <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
               <Route path='/editTable' element = {<EditTableList/>}></Route>
               <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>
+              <Route path='/login' element={<Login/>}></Route>
+              <Route path='/signup' element={<Signup/>}></Route>
           </Routes>
         </Router>
       </ThemeProvider>
