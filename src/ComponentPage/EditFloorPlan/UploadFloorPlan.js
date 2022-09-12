@@ -1,4 +1,4 @@
-import React,{useState,useRef} from 'react'
+import React,{useState,useRef, useEffect} from 'react'
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
@@ -21,7 +21,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
   // drag state
   const [dragActive, setDragActive] = useState(false);
   // ref
-  const inputRef = useRef(null);
+  const previousValue = useRef(null);
 
   // handle drag events
   const handleDrag = (e)=> {
@@ -41,6 +41,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.dataTransfer.files[0]})
+      
     }
   };
   
@@ -49,6 +50,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.target.files[0]})
+      
     }
   };
 
@@ -134,15 +136,17 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
           <FormControl fullWidth>
           {/* ref={inputRef} */}
             <input type="file" id="input-file-upload" onChange={handleUploadChange} name="floorPlan" hidden required/>
-            <label for={floorPlan["floorPlan"]["name"]? "" : "input-file-upload" }>
+            <label htmlFor={floorPlan["floorPlan"]["name"]? "" : "input-file-upload" }>
               <Box display={"flex"} justifyContent={"center"} onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} sx={{ border: '2px dashed grey', borderRadius: 4}}>
                 
-                {floorPlan["floorPlan"]["name"]? 
-                <Chip label ={floorPlan["floorPlan"]["name"]} onDelete={()=>{setFloorPlan({...floorPlan,['floorPlan']:""}) }}/> : <h4 style={{textDecoration:"none"}}>Drag or Click to upload</h4>
-                }
-
+                <h4 style={{textDecoration:"none"}}>Drag or Click to upload</h4>
+  
               </Box> 
             </label>
+            {
+              floorPlan["floorPlan"]["name"] && 
+              <Chip label ={floorPlan["floorPlan"]["name"]} onDelete={()=>{setFloorPlan({...floorPlan,['floorPlan']:""})}}/>
+            }
           </FormControl>
           <Button type='submit' variant="outlined">Submit</Button>
         </Stack>

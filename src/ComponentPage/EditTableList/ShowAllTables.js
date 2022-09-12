@@ -37,6 +37,8 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
   useEffect(()=>{
     axios.get("http://localhost:3001/desk/getAllSensors").then((res)=>{
+      const arr = res.data[0].desks
+      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
       setAllSensors(res.data)
     })
   },[rerender])
@@ -61,7 +63,7 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
               <TableCell>{oneLevel['location']}</TableCell>
               <TableCell align="right">{oneLevel['level']}</TableCell>
               <TableCell align="right">{oneDesk["deskID"]}</TableCell>
-              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk)}>Delete</Button></TableCell>
+              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk["deskID"])}>Delete</Button></TableCell>
             </TableRow>
           })
         })}

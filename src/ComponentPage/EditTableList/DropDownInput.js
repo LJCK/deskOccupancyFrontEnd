@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import {useSnackbar} from "notistack"
 import axios from 'axios';
 
@@ -30,28 +30,28 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
 
     let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
     
-    const newDeskObj = {
-      deskID:id,
-      location: newDesk['location'],
-      locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
-      level: newDesk['level'],
-      sensorType: newDesk['sensorType']
-    }
+    // const newDeskObj = {
+    //   deskID:id,
+    //   location: newDesk['location'],
+    //   locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
+    //   level: newDesk['level'],
+    //   sensorType: newDesk['sensorType']
+    // }
 
-    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
-      if(res.status === 200){
-        customAlert(res.data,"success")
-        setRerender(!rerender)
-        }
-      }).catch((error)=>{customAlert(error.response, "error")})
-    setNewDesk({"location":'', "level": '', "id": ''})
+    // axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
+    //   if(res.status === 200){
+    //     customAlert(res.data,"success")
+    //     setRerender(!rerender)
+    //     }
+    //   }).catch((error)=>{customAlert(error.response, "error")})
+    // setNewDesk({"location":'', "level": '', "id": ''})
 
-    // customAlert("Trying to connect to the IoT hub.","info")
-    // mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
-    // mqttClient.on('message', messageCallBack)
+    customAlert("Trying to connect to the IoT hub.","info")
+    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    mqttClient.on('message', messageCallBack)
 
-    // console.log("listener is up and running.")
-    // customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
+    console.log("listener is up and running.")
+    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
   }
 
   const customAlert=(message,variant)=>{
@@ -85,7 +85,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
     if (topic === "zigbee2mqtt/bridge/event" && msg.type === "device_interview") {
       switch (msg.data.status) {
         case "started":
-          customAlert(`Device interview commencing. Please wait...`, "success")
+          customAlert(`Device interview commencing. Please wait further instruction...`, "success")
           break;
         case "failed":
           customAlert("Pairing fail", "error")
@@ -108,14 +108,10 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   };
 
   return (
-    <Box>
-      
-      <form onSubmit={handleSubmit}>
-        <Stack
-          direction={config}
-          divider={<Divider orientation="vertical" flexItem />}
-          spacing={2}
-        >
+    <Box >
+      <Grid container spacing={2} columns={{xs:12}}>
+        <form onSubmit={handleSubmit}>
+          <Grid item xs={12}>
           <FormControl fullWidth >
             <InputLabel id="demo-simple-select-label">Location</InputLabel>
             <Select
@@ -149,7 +145,9 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
             })}
             </Select>
           </FormControl>
-
+          </Grid>
+          
+          <Grid item xs={6}>
           <FormControl fullWidth >
             <InputLabel id="demo-simple-select-label">Sensor Type</InputLabel>
             <Select
@@ -177,10 +175,10 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
               type ="number"
             />
           </FormControl>
-
+          </Grid>
           <Button type='submit' variant="outlined">Submit</Button>
-        </Stack>
-      </form>
+        </form>
+      </Grid>
     </Box>
   )
 }
