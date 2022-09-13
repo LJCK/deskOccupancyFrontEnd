@@ -31,7 +31,7 @@ const DisplayTableStatus=({mqttClient})=>{
   const [denominator, setDenominator] = useState()
   const [floorPlan,setFloorPlan] = useState([])
   const [open, setOpen] = useState(false)
-  const [dispalyGroup, setDisplayGroup] = useState(0)
+  const [displayGroup, setDisplayGroup] = useState(0)
 
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
@@ -134,7 +134,7 @@ const DisplayTableStatus=({mqttClient})=>{
 
           <Grid container spacing={2} columns={{xs:5}} direction="row" justifyContent="space-around" alignItems="center"> 
             {tableStatus.map((item,index)=>{
-              if(index !== dispalyGroup){
+              if(index !== displayGroup){
                 return
               }
               return item.map((i, index)=>{
