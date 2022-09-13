@@ -18,6 +18,12 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const removeDevice=(deskID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
     mqttClient.publish("zigbee2mqtt/bridge/request/device/remove", `{ "id": "devices/${deskID}", "force":true}`)
+    // mqttClient.subscribe("zigbee2mqtt/bridge/request/device/remove")
+    // mqttClient.on("message", function(topic, message){
+    //   if (topic =="zigbee2mqtt/bridge/request/device/remove"){
+    //     console.log("remove success, message: ", JSON.parse(message))
+    //   }
+    // })
   }
 
   const handleDelete=(e, locationID, deskID)=>{
@@ -41,6 +47,8 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
     if (user){
       axios.get("http://localhost:3001/desk/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
+      const arr = res.data[0].desks
+      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
       setAllSensors(res.data)
     })
     }
@@ -61,12 +69,13 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
       <TableBody>
         {allSensors.map((oneLevel)=>{
-          return oneLevel.desks.map((oneDesk)=>{
-            return <TableRow key={oneDesk['deskID']}>
+
+          return oneLevel["desks"].map((oneDesk,index)=>{
+            return <TableRow key={index}>
               <TableCell>{oneLevel['location']}</TableCell>
               <TableCell align="right">{oneLevel['level']}</TableCell>
-              <TableCell align="right">{oneDesk['deskID']}</TableCell>
-              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk['deskID'])}>Delete</Button></TableCell>
+              <TableCell align="right">{oneDesk["deskID"]}</TableCell>
+              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk["deskID"])}>Delete</Button></TableCell>
             </TableRow>
           })
         })}

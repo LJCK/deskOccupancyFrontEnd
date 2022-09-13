@@ -1,4 +1,4 @@
-import React,{useState,useRef} from 'react'
+import React,{useState,useRef, useEffect} from 'react'
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
@@ -7,6 +7,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import axios from 'axios';
 
 const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, config}) => {
@@ -20,7 +21,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
   // drag state
   const [dragActive, setDragActive] = useState(false);
   // ref
-  const inputRef = useRef(null);
+  const previousValue = useRef(null);
 
   // handle drag events
   const handleDrag = (e)=> {
@@ -40,21 +41,25 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.dataTransfer.files[0]})
+      
     }
   };
-  console.log(floorPlan["floorPlan"]["name"])
+  
   // triggers when file is selected with click
   const handleUploadChange = (e)=>{
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.target.files[0]})
+      
     }
   };
 
   // triggers the input when the button is clicked
-  const onButtonClick = () => {
-    inputRef.current.click();
-  };
+  // const onButtonClick = () => {
+  //   if(floorPlan["floorPlan"] != ""){
+  //     inputRef.current.click();
+  //   }
+  // };
 
   const handleSubmit=(e)=>{
     e.preventDefault();
@@ -129,15 +134,19 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
           </FormControl>
 
           <FormControl fullWidth>
-            <input ref={inputRef} type="file" id="input-file-upload" multiple={true} onChange={handleUploadChange} name="floorPlan" required/>
-            <label id="label-file-upload" htmlFor="input-file-upload" className={dragActive ? "drag-active" : "" }>
-              <Box id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} sx={{p:2}}>
-                {floorPlan["floorPlan"]["name"]? 
-                <p>{floorPlan["floorPlan"]["name"]}</p> :<a className="upload-button" onClick={()=>onButtonClick} style={{textDecoration:"none"}}>Drag or Click to upload</a>
+          {/* ref={inputRef} */}
+            <input type="file" id="input-file-upload" onChange={handleUploadChange} name="floorPlan" hidden required/>
+            <label htmlFor={floorPlan["floorPlan"]["name"]? "" : "input-file-upload" }>
+              <Box display={"flex"} justifyContent={"center"} onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} sx={{ border: '2px dashed grey', borderRadius: 4}}>
                 
-                }
+                <h4 style={{textDecoration:"none"}}>Drag or Click to upload</h4>
+  
               </Box> 
             </label>
+            {
+              floorPlan["floorPlan"]["name"] && 
+              <Chip label ={floorPlan["floorPlan"]["name"]} onDelete={()=>{setFloorPlan({...floorPlan,['floorPlan']:""})}}/>
+            }
           </FormControl>
           <Button type='submit' variant="outlined">Submit</Button>
         </Stack>

@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
+import { useMediaQuery } from '@mui/material';
+import { useTheme } from '@emotion/react';
+import Button from '@mui/material/Button';
 import ImageIcon from '@mui/icons-material/Image';
 import SpeedDial from '@mui/material/SpeedDial';
-import { red, green } from '@mui/material/colors';
+import { lightBlue } from '@mui/material/colors';
 import axios from 'axios'
+import Typography from '@mui/material/Typography';
 import { Box } from "@mui/material";
 import Modal from '@mui/material/Modal';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
-const style = {
+const floorPlanStyle = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -22,88 +25,182 @@ const style = {
   textAlign: 'center'
 };
 
-const DisplayTableStatus=({isSideBarOpen})=>{
-
+const DisplayTableStatus=({mqttClient})=>{
   const [tableStatus,setTableStatus] = useState([])
-  const [occupencyRatio, setOccupencyRatio] = useState()
+  const [numerator, setNumerator] = useState()
+  const [denominator, setDenominator] = useState()
   const [floorPlan,setFloorPlan] = useState([])
-  const [reload, setReload] = useState(false)
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false)
+  const [dispalyGroup, setDisplayGroup] = useState(0)
+
+  const theme = useTheme();
+  const isMatch = useMediaQuery(theme.breakpoints.down('md'))
+
   const handleOpen = () => {
     setOpen(true);
-    axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}`).then((res)=>{
+  }
+  const handleClose = () => setOpen(false);
+
+  const { id } = useParams()
+
+  // useEffect(()=>{
+  //   axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
+  //     if (res.data[0] === null){
+  //       setFloorPlan([])
+  //     }else{
+  //       setFloorPlan(res.data)
+  //     }
+  //   })
+  // },[])
+
+  useEffect(()=>{
+    mqttClient.on('message', messageCallBack)
+    function messageCallBack (topic,message){
+      if(topic === `bumGoWhere/frontend/update/${id}`){
+        const payload = JSON.parse(message)
+        
+        const fraction = payload.occupencyRatio.split('/')
+        setNumerator(fraction[0]) 
+        setDenominator(fraction[1])
+
+        const arr = payload.tables.desks
+        arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+        const arrSeparationLoop = Math.ceil(arr.length/10) 
+        const newArr = []
+        for(let i=0; i<arrSeparationLoop; i++){
+          let partArr = arr.slice(i*10, i*10+10)
+          // console.log(partArr)
+          newArr.push(partArr)
+        }
+        setTableStatus(newArr)
+
+      }
+    }
+
+    axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
       if (res.data[0] === null){
         setFloorPlan([])
       }else{
         setFloorPlan(res.data)
       }
     })
-  }
-  const handleClose = () => setOpen(false);
 
-  const { id } = useParams()
-  
-  setTimeout(function() {
-    setReload(!reload)
-  }, 60000);
-
-  useEffect(()=>{
     axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
-    setOccupencyRatio(res.data.occupencyRatio)  
-    setTableStatus(res.data.tables.desks)
+    const fraction = res.data.occupencyRatio.split('/')
+    setNumerator(fraction[0]) 
+    setDenominator(fraction[1])
+    if(res.data.tables.desks){
+      const arr = res.data.tables.desks
+      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+      const arrSeparationLoop = Math.ceil(arr.length/10) 
+      const newArr = []
+      for(let i=0; i<arrSeparationLoop; i++){
+        let partArr = arr.slice(i*10, i*10+10)
+        // console.log(partArr)
+        newArr.push(partArr)
+      }
+      console.log(newArr)
+      setTableStatus(newArr)
+    } 
     })
-  },[id,reload])
+  },[])
 
   return (
     <div>
-    <Grid  container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent={"center"}>
-      <Grid item xs={11} >
-        <h1>Level {id.split("_").at(-1)}</h1>
-        <h5>{occupencyRatio +"% occupied" }</h5>
+      <Grid  container spacing={{ xs: 6}}  justifyContent={"center"} paddingTop={"15px"}>
+        
+        <Grid item xs={12} display={"flex"} justifyContent={"center"}>
+          <Typography variant="h4" color={lightBlue[900]}> Welcome to <u>Level {id.split("_").at(-1)}!</u></Typography >
+        </Grid>
+
+        {/* grid for showing occupancy rate */}
+        <Grid item xs={12} md={6} display={"flex"} justifyContent={"center"}>
+          
+          <Paper sx={{borderRadius: 100, border:"5px solid", borderColor: lightBlue[900], height : 200, width :200, display:"flex", justifyContent:"center", alignItems:"center"}}>
+            <Typography variant="h5" display ={"flex"} flexDirection={"column"} justifyContent={"center"} textAlign={"center"}>
+            <Box component='span' sx={{"fontSize": "200%"}}>{numerator}</Box> out of {denominator} tables available</Typography>
+          </Paper>
+
+        </Grid>
+
+        {/* grid for buttons and table icons */}
+        <Grid item xs={12} md={6} display={"flex"} flexDirection={"column"} justifyContent={"center"}>
+          
+          <Grid item xs={12} display={"flex"} justifyContent={"center"} maxHeight={"30px"} marginBottom={"20px"}>
+            {tableStatus.map((item, index)=>{
+              return <Button variant="outlined" key={index} onClick={()=>setDisplayGroup(index)}>{item[0]["deskID"].split("_").at(-1)} - {item.at(-1)["deskID"].split("_").at(-1)}</Button>
+            })}
+          </Grid>
+
+          <Grid container spacing={2} columns={{xs:5}} direction="row" justifyContent="space-around" alignItems="center"> 
+            {tableStatus.map((item,index)=>{
+              if(index !== dispalyGroup){
+                return
+              }
+              return item.map((i, index)=>{
+                return <Grid item xs={1} key={index} display={"flex"} justifyContent={"center"}>
+                  <Paper sx={{bgcolor : i["status"] ==="unoccupied" ? "#C1F4B8" : "#FFA5A5", height: 60, width:40}} >
+                    Table <Box component={"span"} display={"flex"} justifyContent={"center"}>{i["deskID"].split("_").at(-1)}</Box>
+                  </Paper>
+                </Grid>
+              })
+            })}
+          </Grid>
+        </Grid>
+        
       </Grid>
       
-      {tableStatus.map((item,index)=>{
-        return <Grid item xs={6} sm={4} md={3} key={index} component={Paper} >
-          {item["status"] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
-          
-          <h3>Table: {item.deskID.split("_").at(-1)}</h3>
-          
-          <h3>Status: {item.status}</h3>
-        </Grid>
-      })}
-    </Grid>
-    <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        { 
-          floorPlan[0] === undefined? 
-          <Box sx={style}>   <ImageNotSupportedIcon/>    <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
-        </Box> : <Box sx={style}>
+      {isMatch ? <Box border={"solid"} marginTop={"5px"}>
+        {floorPlan.map((singleData, index) => {
+          const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+            function (data, byte) {
+                return data + String.fromCharCode(byte);
+            },
+            ''
+        ));
+          return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
+        })}
+        <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+        </Box> 
+        : 
+        <Box>
+          {/* pop up image */}
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            { 
+              floorPlan[0] === undefined? 
+              <Box sx={floorPlanStyle}>   <ImageNotSupportedIcon/>    <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
+            </Box> : <Box sx={floorPlanStyle}>
 
-          {floorPlan.map((singleData, index) => {
-            const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
-              function (data, byte) {
-                  return data + String.fromCharCode(byte);
-              },
-              ''
-          ));
-            return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
-          })}
-          <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+              {floorPlan.map((singleData, index) => {
+                const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+                  function (data, byte) {
+                      return data + String.fromCharCode(byte);
+                  },
+                  ''
+              ));
+                return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
+              })}
+              <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+            </Box>
+            }
+            
+          </Modal>
+
+          <SpeedDial
+            ariaLabel="SpeedDial basic example"
+            sx={{ position: 'absolute', bottom: 16, right: 16 }}
+            icon={<ImageIcon />}
+            onClick = {handleOpen}
+          >
+          </SpeedDial>
         </Box>
-        }
-        
-      </Modal>
-      <SpeedDial
-        ariaLabel="SpeedDial basic example"
-        sx={{ position: 'absolute', bottom: 16, right: 16 }}
-        icon={<ImageIcon />}
-        onClick = {handleOpen}
-      >
-      </SpeedDial>
+      } 
+      
     </div>
   )
 }
