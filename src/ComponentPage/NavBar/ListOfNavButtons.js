@@ -137,8 +137,6 @@ const ListOfNavButtons =({config})=>{
       </ListItem>
     </List>
     
-    )}
-    
 
     <Popover
       id={locationID}
