@@ -8,10 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from 'axios';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 
 const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const [allSensors, setAllSensors] = useState([])
+  const {user} = useAuthContext()
   
   const removeDevice=(deskID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
@@ -20,8 +22,14 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
   const handleDelete=(e, locationID, deskID)=>{
     e.preventDefault()
+
+    if(!user) {
+      console.log("user not logged")
+      return
+    }
+
     const payload = {locationID:locationID,deskID:deskID}
-    axios.delete("http://localhost:3001/desk/deleteDesk",{data:payload}).then((res)=>{
+    axios.delete("http://localhost:3001/desk/deleteDesk", {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
       if(res.status === 200){
         removeDevice(payload.deskID)
         setRerender(!rerender)
@@ -30,10 +38,14 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   }
 
   useEffect(()=>{
-    axios.get("http://localhost:3001/desk/getAllSensors").then((res)=>{
+
+    if (user){
+      axios.get("http://localhost:3001/desk/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
       setAllSensors(res.data)
     })
-  },[rerender])
+    }
+    
+  },[rerender, user])
 
   return (
     <TableContainer component={Paper} >

@@ -1,5 +1,5 @@
 import DisplayTableStatus from "./ComponentPage/DisplayTableStatus/DisplayTableStatus";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 import { green } from '@mui/material/colors';
 import { Home } from "./ComponentPage/Home";
 import { TopBar } from "./ComponentPage/NavBar/TopBar";
@@ -11,6 +11,7 @@ import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import Login from './ComponentPage/Login/Login'
 import Signup from './ComponentPage/Login/Signup'
+import { useAuthContext } from "./hooks/useAuthContext";
 
 function App() {
   const theme = createTheme({
@@ -20,6 +21,8 @@ function App() {
       }
     },
   });
+
+  const {user} = useAuthContext()
   
   return (
     <SnackbarProvider maxSnack={5}>
@@ -30,10 +33,10 @@ function App() {
           <Routes>
               <Route exact path='/' element = {<Home />}></Route>
               <Route path='/:id' element = {<DisplayTableStatus/>}></Route>
-              <Route path='/editTable' element = {<EditTableList/>}></Route>
-              <Route path = '/editFloorPlan' element = {<EditFloorPlan/>}></Route>
-              <Route path='/login' element={<Login/>}></Route>
-              <Route path='/signup' element={<Signup/>}></Route>
+              <Route path='/editTable' element = {user ? <EditTableList/> : <Navigate to="/" />}></Route>
+              <Route path = '/editFloorPlan' element = {user ? <EditFloorPlan/> : <Navigate to="/" />}></Route>
+              <Route path='/login' element={!user ? <Login/> : <Navigate to="/" />}></Route>
+              <Route path='/signup' element={!user ? <Signup/> : <Navigate to="/" />}></Route>
           </Routes>
         </Router>
       </ThemeProvider>
