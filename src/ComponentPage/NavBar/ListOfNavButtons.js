@@ -67,6 +67,54 @@ const ListOfNavButtons =({config})=>{
   // const isMatch = useMediaQuery(theme.breakpoints.down('md'))
   
   return <div>
+    {!user && (
+    <List sx={config} >
+
+      {/* Location button */}
+      <ListItem >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={showLocation}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <LocationOnIcon />
+          </ListItemIcon>
+          <ListItemText primary="Location" />
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={()=>navigate('/signup')}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <PersonAddAlt1Icon />
+          </ListItemIcon>
+          <ListItemText primary="Signup"/>
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={()=>navigate('/login')}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <LoginIcon />
+          </ListItemIcon>
+          <ListItemText primary="Log In" />
+        </ListItemButton>
+      </ListItem>
+    </List>
+    
+  )}
+    
+    
+    {user && (
     <List sx={config} >
 
     {/* Location button */}
@@ -136,6 +184,8 @@ const ListOfNavButtons =({config})=>{
         <ListItemText primary={user.email} />
       </ListItem>
     </List>
+    
+    )}
     
 
     <Popover
