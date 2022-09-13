@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
 import ImageIcon from '@mui/icons-material/Image';
+import SpeedDial from '@mui/material/SpeedDial';
 import { red, green } from '@mui/material/colors';
 import axios from 'axios'
 import { Box } from "@mui/material";
@@ -23,6 +25,7 @@ const style = {
 const DisplayTableStatus=({isSideBarOpen})=>{
 
   const [tableStatus,setTableStatus] = useState([])
+  const [occupencyRatio, setOccupencyRatio] = useState()
   const [floorPlan,setFloorPlan] = useState([])
   const [reload, setReload] = useState(false)
   const [open, setOpen] = React.useState(false);
@@ -39,34 +42,33 @@ const DisplayTableStatus=({isSideBarOpen})=>{
   const handleClose = () => setOpen(false);
 
   const { id } = useParams()
+  
   setTimeout(function() {
     setReload(!reload)
   }, 60000);
 
   useEffect(()=>{
     axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
-      setTableStatus(res.data)
+    setOccupencyRatio(res.data.occupencyRatio)  
+    setTableStatus(res.data.tables.desks)
     })
   },[id,reload])
 
   return (
-    <>
-    <Grid container spacing={2}>
-      <Grid item xs={6} md={11}>
-        <h1>Level {id}</h1>
+    <div>
+    <Grid  container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }} justifyContent={"center"}>
+      <Grid item xs={11} >
+        <h1>Level {id.split("_").at(-1)}</h1>
+        <h5>{occupencyRatio +"% occupied" }</h5>
       </Grid>
-      <Grid item xs={6} md={1} sx={{mr:-5}}>
-        <ImageIcon fontSize="large" sx={{mt:3}} onClick={handleOpen} style={{position:"fixed", right:"1%"}}/>
-      </Grid>
-    </Grid>
-    
-    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+      
       {tableStatus.map((item,index)=>{
-        return <Grid item xs={2} sm={4} md={4} key={index}>
-          {item[item.id] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
+        return <Grid item xs={6} sm={4} md={3} key={index} component={Paper} >
+          {item["status"] ==="unoccupied" ? <TableRestaurantIcon sx={{color:green[500], fontSize: 40}}/> :<TableRestaurantIcon sx={{color:red[500], fontSize: 40}}/>}
           
-          <h3>Table: {item.id}</h3>
-          <h3>Expiry Time: {item.expiryTime}</h3>
+          <h3>Table: {item.deskID.split("_").at(-1)}</h3>
+          
+          <h3>Status: {item.status}</h3>
         </Grid>
       })}
     </Grid>
@@ -95,8 +97,14 @@ const DisplayTableStatus=({isSideBarOpen})=>{
         }
         
       </Modal>
-      
-    </>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 16, right: 16 }}
+        icon={<ImageIcon />}
+        onClick = {handleOpen}
+      >
+      </SpeedDial>
+    </div>
   )
 }
 

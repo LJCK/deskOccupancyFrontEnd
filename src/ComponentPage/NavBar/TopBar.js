@@ -1,42 +1,32 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { styled, useTheme } from '@mui/material/styles';
+import React from 'react'
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
-import AuthButtons from './AuthButtons'
-import { useNavigate } from 'react-router-dom';
+import ListOfNavButtons from './ListOfNavButtons'
 import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
-import { useCustemContext } from '../../Context/OnOffContext';
-
+import { useMediaQuery } from '@mui/material';
+import { useTheme } from '@emotion/react';
+import NavButtonMobile from './NavButtonMobile';
 
 export const TopBar = () => {
-  let navigate = useNavigate();
-  const {isSideBarOpen,setIsSideBarOpen} = useCustemContext()
-  
+  const theme = useTheme();
+  const isMatch = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
-    <div>
-    <Box sx={{ display: 'flex' }}>
-      <AppBar position="fixed" open={isSideBarOpen} >
+    <Box >
+      <AppBar position="static" >
+        
         <Toolbar>
-          
-          <a href="/"><AirlineSeatReclineNormalIcon style={{"marginLeft":"-1.5rem"}} fontSize="large"/></a>
-          
+          <a href="/"><AirlineSeatReclineNormalIcon fontSize="large"/></a>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Bum Go Where
           </Typography>
+          {isMatch ? <NavButtonMobile/>:<ListOfNavButtons config={{display:"flex", flexDirection:"row"}} />}
+          
         </Toolbar>
       </AppBar>
       
     </Box>
-    </div>
   );
 }

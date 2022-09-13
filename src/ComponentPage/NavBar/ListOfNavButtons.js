@@ -11,11 +11,16 @@ import MenuItem from '@mui/material/MenuItem';
 import allLocations from '../../Constants/locations.json'
 import { useNavigate } from 'react-router-dom';
 import LoginIcon from '@mui/icons-material/Login';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import LogoutIcon from '@mui/icons-material/Logout';
 import React,{useState} from 'react'
 import axios from 'axios'
+import { useLogout } from '../../hooks/useLogout';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const ListOfNavButtons =()=>{
 
+const ListOfNavButtons =({config})=>{
   let navigate = useNavigate();
 
   const [locations, setLocations] = useState(allLocations)
@@ -36,7 +41,7 @@ const ListOfNavButtons =()=>{
 
   const handleClose = () => {
     setLocationAnchorEl(null);
-    setLevelAnchorEl(null)
+    setLevelAnchorEl(null);
   };
 
   const URLredirect =(level)=>{
@@ -45,18 +50,32 @@ const ListOfNavButtons =()=>{
     setLevelAnchorEl(null)
   }
 
+  const { logout } = useLogout()
+
+  const handleClick = () => {
+    logout()
+  }
+
+  const { user } = useAuthContext()
+
   const locationOpen = Boolean(locationAnchorEl);
   const levelOpen = Boolean(levelAnchorEl)
   const locationID = locationOpen ? 'simple-popover' : undefined;
   const levelID = levelOpen ? 'simple-popover' : undefined;
 
-  return <div style={{width:"167px", maxWidth:"167px", minWidth:"167px", marginTop:"60px"}}>
-    <List sx={{display:"flex", flexDirection:"column"}}>
+  // const theme = useTheme();
+  // const isMatch = useMediaQuery(theme.breakpoints.down('md'))
+  
+  
+  return <div>
+
+  {!user && (
+    <List sx={config} >
+
       {/* Location button */}
-      <ListItem disablePadding>
+      <ListItem >
         <ListItemButton sx={{
-              px: 0,
-              display:"flex", flexDirection:"row"
+              px: 0,display:"flex",flexDirection:"column"
             }} onClick={showLocation}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
@@ -67,38 +86,23 @@ const ListOfNavButtons =()=>{
         </ListItemButton>
       </ListItem>
 
-      {/* Table sensor button */}
-      <ListItem disablePadding>
+      <ListItem >
         <ListItemButton sx={{
-              px: 0,
-            }} onClick={()=>navigate('/editTable')}>
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={()=>navigate('/signup')}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
               }}>
-            <SensorsIcon />
+            <PersonAddAlt1Icon />
           </ListItemIcon>
-          <ListItemText primary="Table Sensor"  />
+          <ListItemText primary="Signup"/>
         </ListItemButton>
       </ListItem>
 
-      {/* Floor plan button */}
-      <ListItem disablePadding>
+      <ListItem >
         <ListItemButton sx={{
-              px: 0,
-            }} onClick={()=>navigate('/editFloorPlan')}>
-          <ListItemIcon sx={{
-                justifyContent: 'center',
-              }}>
-            <ImageIcon />
-          </ListItemIcon>
-          <ListItemText primary="Floor Plan" />
-        </ListItemButton>
-      </ListItem>
-      
-      <ListItem disablePadding>
-        <ListItemButton sx={{
-              px: 0,
-            }} onClick={()=>navigate('/')}>
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={()=>navigate('/login')}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
               }}>
@@ -108,6 +112,83 @@ const ListOfNavButtons =()=>{
         </ListItemButton>
       </ListItem>
     </List>
+    
+  )}
+    
+    
+    {user && (
+    <List sx={config} >
+
+    {/* Location button */}
+    <ListItem >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={showLocation}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <LocationOnIcon />
+          </ListItemIcon>
+          <ListItemText primary="Location" />
+        </ListItemButton>
+      </ListItem>
+
+    {/* Table sensor button */}
+      <ListItem  >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={()=>navigate('/editTable')}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <SensorsIcon />
+          </ListItemIcon>
+          <ListItemText primary="Sensors"  />
+        </ListItemButton>
+      </ListItem>
+
+      {/* Floor plan button */}
+      <ListItem >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={()=>navigate('/editFloorPlan')}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <ImageIcon />
+          </ListItemIcon>
+          <ListItemText primary="Plans" />
+        </ListItemButton>
+      </ListItem>
+
+      {/* logout */}
+      <ListItem >
+        <ListItemButton sx={{
+              px: 0,display:"flex",flexDirection:"column"
+            }} onClick={handleClick}>
+          <ListItemIcon sx={{
+                justifyContent: 'center',
+              }}>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText primary="Log Out" />
+        </ListItemButton>
+      </ListItem>
+      
+      <ListItem sx={{
+            px: 0,display:"flex",flexDirection:"column"
+          }} >
+        <ListItemIcon sx={{
+              justifyContent: 'center',
+            }}>
+          <AccountCircleIcon />
+        </ListItemIcon>
+        <ListItemText primary={user.email} />
+      </ListItem>
+    </List>
+    
+    )}
+    
 
     <Popover
       id={locationID}
@@ -116,15 +197,15 @@ const ListOfNavButtons =()=>{
       onClose={handleClose}
       anchorOrigin={{
         vertical: 'bottom',
-        horizontal: 'center',
+        horizontal: 'right',
       }}
       transformOrigin={{
         vertical: 'top',
-        horizontal: 'center',
+        horizontal: 'right',
       }}
     >
-      {locations.map((item,index)=>{
-        return <MenuItem key={index} onClick={event=>showLevel(event,item.location, item.id)}>{item.location}</MenuItem>
+      {Object.keys(locations).map((key,index)=>{
+        return <MenuItem key={index} onClick={event=>showLevel(event,key,locations[key])}>{key}</MenuItem>
       })}
     </Popover>
 

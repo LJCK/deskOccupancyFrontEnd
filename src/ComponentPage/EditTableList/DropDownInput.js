@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -8,13 +8,14 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import {useSnackbar} from "notistack"
 import axios from 'axios';
 
-const DropDownInput = ({locationState,levelState}) => {
-  
+const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRerender, config}) => {
+
+  const { enqueueSnackbar } = useSnackbar();
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
-  
   const [newDesk, setNewDesk]= useState({
     "location":'', "level": '', "id": ''
   })
@@ -24,29 +25,79 @@ const DropDownInput = ({locationState,levelState}) => {
     setNewDesk({...newDesk,[e.target.name]:e.target.value})
   };
 
-  const handleSubmit=()=>{
+  const handleSubmit=(e)=>{
+    e.preventDefault()
+
+    customAlert("Trying to connect to the IoT hub.","info")
+    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    mqttClient.on('message', messageCallBack)
+
+    console.log("listener is up and running.")
+    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
+  }
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
+  }
+
+  function updateDB(){
+    console.log("new desk ", newDesk)
     let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
-    let location = newDesk['location']
     const newDeskObj = {
       deskID:id,
-      location: location,
+      location: newDesk['location'],
       locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
       level: newDesk['level']
     }
-    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{alert(res.data)}).catch((error)=>{alert(error.response.data)})
-    console.log(newDeskObj)
-    setNewDesk({"location":'', "level": '', "id": ''})
+
+    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
+      if(res.status === 200){
+        customAlert(res.data,"success")
+        setRerender(!rerender)
+        }
+      }).catch((error)=>{customAlert(error.response, "error")})
+      setNewDesk({"location":'', "level": '', "id": ''})
   }
+  
+  function messageCallBack (topic, payload) {
+    const msg = JSON.parse(payload.toString());
+    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['id']}`
+
+    if (topic === "zigbee2mqtt/bridge/event" && msg.type === "device_interview") {
+      switch (msg.data.status) {
+        case "started":
+          customAlert(`Device interview commencing. Please wait...`, "success")
+          break;
+        case "failed":
+          customAlert("Pairing fail", "error")
+          break;
+        case "successful": //on pairing...
+          updateDB()
+          let friendly_name = msg.data.friendly_name;
+          mqttClient.publish("zigbee2mqtt/bridge/request/device/rename", `{ "from": "${friendly_name}", "to": "devices/${id}" }`) 
+          customAlert(`Device ${id} rename success`, "success")
+          mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": false }');
+          mqttClient.removeAllListeners("message")
+          break;
+        default:
+          mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": false }');
+          mqttClient.removeAllListeners("message")
+          break;
+
+      }
+    }
+  };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box>
+      
       <form onSubmit={handleSubmit}>
         <Stack
-          direction="row"
+          direction={config}
           divider={<Divider orientation="vertical" flexItem />}
           spacing={2}
         >
-          <FormControl fullWidth>
+          <FormControl fullWidth >
             <InputLabel id="demo-simple-select-label">Location</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -57,13 +108,13 @@ const DropDownInput = ({locationState,levelState}) => {
               onChange={handleChange}
               required
             >
-            {locations.map((location, index)=>{
-              return <MenuItem key={index} value={location.id}>{location.location}</MenuItem>
+            {Object.keys(locations).map((key, index)=>{
+              return <MenuItem key={index} value={key}>{key}</MenuItem>
             })}
             </Select>
           </FormControl>
 
-          <FormControl fullWidth>
+          <FormControl fullWidth >
             <InputLabel id="demo-simple-select-label">Level</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -80,7 +131,7 @@ const DropDownInput = ({locationState,levelState}) => {
             </Select>
           </FormControl>
 
-          <FormControl fullWidth>
+          <FormControl fullWidth >
             <TextField
               required
               id="outlined-required"
