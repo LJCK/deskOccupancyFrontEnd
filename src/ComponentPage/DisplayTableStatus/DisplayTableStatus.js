@@ -139,7 +139,7 @@ const DisplayTableStatus=({mqttClient})=>{
               }
               return item.map((i, index)=>{
                 return <Grid item xs={1} key={index} display={"flex"} justifyContent={"center"}>
-                  <Paper sx={{bgcolor : i["status"] ==="unoccupied" ? "#FFA5A5" : "#C1F4B8", height: 60, width:40}} >
+                  <Paper sx={{bgcolor : i["status"] ==="unoccupied" ? "#C1F4B8" : "#FFA5A5", height: 60, width:40}} >
                     Table <Box component={"span"} display={"flex"} justifyContent={"center"}>{i["deskID"].split("_").at(-1)}</Box>
                   </Paper>
                 </Grid>
