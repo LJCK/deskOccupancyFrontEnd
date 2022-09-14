@@ -159,8 +159,10 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
               onChange={handleChange}
               required
             >
-            <MenuItem value={"vibration"}>Vibration</MenuItem>
-            <MenuItem value={"other"}>Other</MenuItem>
+              {/* can change these menu item to an array */}
+              <MenuItem value={"vibration"}>Vibration</MenuItem>
+              <MenuItem value={"other"}>Other</MenuItem>
+              <MenuItem value={""}></MenuItem>
             </Select>
           </FormControl>
 

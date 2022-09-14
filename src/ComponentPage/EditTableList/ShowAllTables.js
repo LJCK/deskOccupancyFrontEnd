@@ -40,7 +40,7 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
       if(res.data[0]){
         const arr = res.data[0].desks
         arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
-        setAllSensors(arr)
+        setAllSensors(res.data)
       }
     })
   },[rerender])
