@@ -37,9 +37,11 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
   useEffect(()=>{
     axios.get("http://localhost:3001/desk/getAllSensors").then((res)=>{
-      const arr = res.data[0].desks
-      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
-      setAllSensors(res.data)
+      if(res.data[0]){
+        const arr = res.data[0].desks
+        arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+        setAllSensors(arr)
+      }
     })
   },[rerender])
 

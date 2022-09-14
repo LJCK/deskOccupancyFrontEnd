@@ -30,28 +30,28 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
 
     let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
     
-    // const newDeskObj = {
-    //   deskID:id,
-    //   location: newDesk['location'],
-    //   locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
-    //   level: newDesk['level'],
-    //   sensorType: newDesk['sensorType']
-    // }
+    const newDeskObj = {
+      deskID:id,
+      location: newDesk['location'],
+      locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
+      level: newDesk['level'],
+      sensorType: newDesk['sensorType']
+    }
 
-    // axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
-    //   if(res.status === 200){
-    //     customAlert(res.data,"success")
-    //     setRerender(!rerender)
-    //     }
-    //   }).catch((error)=>{customAlert(error.response, "error")})
-    // setNewDesk({"location":'', "level": '', "id": ''})
+    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
+      if(res.status === 200){
+        customAlert(res.data,"success")
+        setRerender(!rerender)
+        }
+      }).catch((error)=>{customAlert(error.response, "error")})
+    setNewDesk({"location":'', "level": '', "id": ''})
 
-    customAlert("Trying to connect to the IoT hub.","info")
-    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
-    mqttClient.on('message', messageCallBack)
+    // customAlert("Trying to connect to the IoT hub.","info")
+    // mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    // mqttClient.on('message', messageCallBack)
 
-    console.log("listener is up and running.")
-    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
+    // console.log("listener is up and running.")
+    // customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
   }
 
   const customAlert=(message,variant)=>{
