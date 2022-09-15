@@ -11,13 +11,9 @@ import MenuItem from '@mui/material/MenuItem';
 import allLocations from '../../Constants/locations.json'
 import { useNavigate } from 'react-router-dom';
 import LoginIcon from '@mui/icons-material/Login';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import LogoutIcon from '@mui/icons-material/Logout';
-import React,{useState} from 'react'
+import React,{ useState} from 'react'
 import axios from 'axios'
-import { useLogout } from '../../hooks/useLogout';
-import { useAuthContext } from '../../hooks/useAuthContext';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
 
 
 const ListOfNavButtons =({config})=>{
@@ -50,14 +46,6 @@ const ListOfNavButtons =({config})=>{
     setLevelAnchorEl(null)
   }
 
-  const { logout } = useLogout()
-
-  const handleClick = () => {
-    logout()
-  }
-
-  const { user } = useAuthContext()
-
   const locationOpen = Boolean(locationAnchorEl);
   const levelOpen = Boolean(levelAnchorEl)
   const locationID = locationOpen ? 'simple-popover' : undefined;
@@ -67,7 +55,6 @@ const ListOfNavButtons =({config})=>{
   // const isMatch = useMediaQuery(theme.breakpoints.down('md'))
   
   return <div>
-    {!user && (
     <List sx={config} >
 
       {/* Location button */}
@@ -84,54 +71,7 @@ const ListOfNavButtons =({config})=>{
         </ListItemButton>
       </ListItem>
 
-      <ListItem >
-        <ListItemButton sx={{
-              px: 0,display:"flex",flexDirection:"column"
-            }} onClick={()=>navigate('/signup')}>
-          <ListItemIcon sx={{
-                justifyContent: 'center',
-              }}>
-            <PersonAddAlt1Icon />
-          </ListItemIcon>
-          <ListItemText primary="Signup"/>
-        </ListItemButton>
-      </ListItem>
-
-      <ListItem >
-        <ListItemButton sx={{
-              px: 0,display:"flex",flexDirection:"column"
-            }} onClick={()=>navigate('/login')}>
-          <ListItemIcon sx={{
-                justifyContent: 'center',
-              }}>
-            <LoginIcon />
-          </ListItemIcon>
-          <ListItemText primary="Log In" />
-        </ListItemButton>
-      </ListItem>
-    </List>
-    
-  )}
-    
-    
-    {user && (
-    <List sx={config} >
-
-    {/* Location button */}
-    <ListItem >
-        <ListItemButton sx={{
-              px: 0,display:"flex",flexDirection:"column"
-            }} onClick={showLocation}>
-          <ListItemIcon sx={{
-                justifyContent: 'center',
-              }}>
-            <LocationOnIcon />
-          </ListItemIcon>
-          <ListItemText primary="Location" />
-        </ListItemButton>
-      </ListItem>
-
-    {/* Table sensor button */}
+      {/* Table sensor button */}
       <ListItem  >
         <ListItemButton sx={{
               px: 0,display:"flex",flexDirection:"column"
@@ -158,35 +98,20 @@ const ListOfNavButtons =({config})=>{
           <ListItemText primary="Plans" />
         </ListItemButton>
       </ListItem>
-
-      {/* logout */}
+      
       <ListItem >
         <ListItemButton sx={{
               px: 0,display:"flex",flexDirection:"column"
-            }} onClick={handleClick}>
+            }} onClick={()=>navigate('/')}>
           <ListItemIcon sx={{
                 justifyContent: 'center',
               }}>
-            <LogoutIcon />
+            <LoginIcon />
           </ListItemIcon>
-          <ListItemText primary="Log Out" />
+          <ListItemText primary="Log In" />
         </ListItemButton>
       </ListItem>
-      
-      <ListItem sx={{
-            px: 0,display:"flex",flexDirection:"column"
-          }} >
-        <ListItemIcon sx={{
-              justifyContent: 'center',
-            }}>
-          <AccountCircleIcon />
-        </ListItemIcon>
-        <ListItemText primary={user.email} />
-      </ListItem>
     </List>
-    
-    )}
-    
 
     <Popover
       id={locationID}
