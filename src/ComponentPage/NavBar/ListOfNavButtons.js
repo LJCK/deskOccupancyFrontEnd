@@ -32,7 +32,7 @@ const ListOfNavButtons =({config})=>{
   const showLevel = (event,location, id) => {
     setLevelAnchorEl(event.currentTarget)
     setUrl(id)
-    axios.get(`http://localhost:3001/desk/getAllLevels?location=${location}`).then((res)=>{setLevels(res.data)})
+    axios.get(`http://localhost:3001/sensor/getAllLevels?location=${location}`).then((res)=>{setLevels(res.data)})
   }
 
   const handleClose = () => {

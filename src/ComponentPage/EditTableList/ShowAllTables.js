@@ -13,9 +13,9 @@ import axios from 'axios';
 const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const [allSensors, setAllSensors] = useState([])
   
-  const removeDevice=(deskID)=>{
+  const removeDevice=(sensorID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
-    mqttClient.publish("zigbee2mqtt/bridge/request/device/remove", `{ "id": "devices/${deskID}", "force":true}`)
+    mqttClient.publish("zigbee2mqtt/bridge/request/device/remove", `{ "id": "devices/${sensorID}", "force":true}`)
     // mqttClient.subscribe("zigbee2mqtt/bridge/request/device/remove")
     // mqttClient.on("message", function(topic, message){
     //   if (topic =="zigbee2mqtt/bridge/request/device/remove"){
@@ -24,22 +24,22 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
     // })
   }
 
-  const handleDelete=(e, locationID, deskID)=>{
+  const handleDelete=(e, locationID, sensorID)=>{
     e.preventDefault()
-    const payload = {locationID:locationID,deskID:deskID}
-    axios.delete("http://localhost:3001/desk/deleteDesk",{data:payload}).then((res)=>{
+    const payload = {locationID:locationID,sensorID:sensorID}
+    axios.delete("http://localhost:3001/sensor/deleteSensor",{data:payload}).then((res)=>{
       if(res.status === 200){
-        removeDevice(payload.deskID)
+        removeDevice(payload.sensorID)
         setRerender(!rerender)
       }
     }).catch((err)=>console.log(err))
   }
 
   useEffect(()=>{
-    axios.get("http://localhost:3001/desk/getAllSensors").then((res)=>{
+    axios.get("http://localhost:3001/sensor/getAllSensors").then((res)=>{
       if(res.data[0]){
-        const arr = res.data[0].desks
-        arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+        const arr = res.data[0].sensors
+        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
         setAllSensors(res.data)
       }
     })
@@ -52,7 +52,7 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
         <TableRow>
           <TableCell>Location</TableCell>
           <TableCell align="right">Level</TableCell>
-          <TableCell align="right">Desk ID</TableCell>
+          <TableCell align="right">Sensor ID</TableCell>
           <TableCell align="right">Delete</TableCell>
         </TableRow>
       </TableHead>
@@ -60,12 +60,12 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
       <TableBody>
         {allSensors.map((oneLevel)=>{
 
-          return oneLevel["desks"].map((oneDesk,index)=>{
+          return oneLevel["sensors"].map((oneSensor,index)=>{
             return <TableRow key={index}>
               <TableCell>{oneLevel['location']}</TableCell>
               <TableCell align="right">{oneLevel['level']}</TableCell>
-              <TableCell align="right">{oneDesk["deskID"]}</TableCell>
-              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneDesk["deskID"])}>Delete</Button></TableCell>
+              <TableCell align="right">{oneSensor["sensorID"]}</TableCell>
+              <TableCell align="right"><Button variant="contained" color="error" onClick={(e)=>handleDelete(e,oneLevel['_id'], oneSensor["sensorID"])}>Delete</Button></TableCell>
             </TableRow>
           })
         })}
