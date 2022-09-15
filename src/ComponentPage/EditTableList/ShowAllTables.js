@@ -8,10 +8,12 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from 'axios';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 
 const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const [allSensors, setAllSensors] = useState([])
+  const {user} = useAuthContext()
   
   const removeDevice=(sensorID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
@@ -26,8 +28,14 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
   const handleDelete=(e, locationID, sensorID)=>{
     e.preventDefault()
-    const payload = {locationID:locationID,sensorID:sensorID}
-    axios.delete("http://localhost:3001/sensor/deleteSensor",{data:payload}).then((res)=>{
+
+    if(!user) {
+      console.log("user not logged")
+      return
+    }
+
+    const payload = {locationID:locationID,deskID:deskID}
+    axios.delete("http://localhost:3001/desk/deleteDesk", {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
       if(res.status === 200){
         removeDevice(payload.sensorID)
         setRerender(!rerender)
@@ -36,14 +44,16 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   }
 
   useEffect(()=>{
-    axios.get("http://localhost:3001/sensor/getAllSensors").then((res)=>{
-      if(res.data[0]){
-        const arr = res.data[0].sensors
-        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-        setAllSensors(res.data)
-      }
+
+    if (user){
+      axios.get("http://localhost:3001/desk/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
+      const arr = res.data[0].desks
+      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+      setAllSensors(res.data)
     })
-  },[rerender])
+    }
+    
+  },[rerender, user])
 
   return (
     <TableContainer component={Paper} >
