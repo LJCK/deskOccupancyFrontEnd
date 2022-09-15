@@ -59,11 +59,11 @@ const DisplayTableStatus=({mqttClient})=>{
       if(topic === `bumGoWhere/frontend/update/${id}`){
         const payload = JSON.parse(message)
         
-        const fraction = payload.occupencyRatio.split('/')
-        setNumerator(fraction[0]) 
-        setDenominator(fraction[1])
+        const sensors = payload.sensors
+        setNumerator(sensors.occupiedSensors) 
+        setDenominator(sensors.numOfVibrationSensors)
 
-        const arr = payload.tables.sensors
+        const arr = sensors.sensors
         arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
         const arrSeparationLoop = Math.ceil(arr.length/10) 
         const newArr = []
@@ -86,11 +86,13 @@ const DisplayTableStatus=({mqttClient})=>{
     })
 
     axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
-    const fraction = res.data.occupencyRatio.split('/')
-    setNumerator(fraction[0]) 
-    setDenominator(fraction[1])
-    if(res.data.tables.sensors){
-      const arr = res.data.tables.sensors
+    // const fraction = res.data.occupencyRatio.split('/')
+    const sensors = res.data.sensors
+    console.log(sensors)
+    setNumerator(sensors.occupiedSensors) 
+    setDenominator(sensors.numOfVibrationSensors)
+    if(sensors.sensors){
+      const arr = sensors.sensors
       arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
       const arrSeparationLoop = Math.ceil(arr.length/10) 
       const newArr = []
@@ -101,7 +103,7 @@ const DisplayTableStatus=({mqttClient})=>{
       }
       console.log(newArr)
       setTableStatus(newArr)
-    } 
+    }
     })
   },[])
 
