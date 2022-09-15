@@ -34,8 +34,8 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
       return
     }
 
-    const payload = {locationID:locationID,deskID:deskID}
-    axios.delete("http://localhost:3001/desk/deleteDesk", {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
+    const payload = {locationID:locationID,sensorID:sensorID}
+    axios.delete("http://localhost:3001/sensor/deleteSensor", {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
       if(res.status === 200){
         removeDevice(payload.sensorID)
         setRerender(!rerender)
@@ -46,9 +46,9 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   useEffect(()=>{
 
     if (user){
-      axios.get("http://localhost:3001/desk/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
-      const arr = res.data[0].desks
-      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+      axios.get("http://localhost:3001/sensor/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
+      const arr = res.data[0].sensors
+      arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
       setAllSensors(res.data)
     })
     }
