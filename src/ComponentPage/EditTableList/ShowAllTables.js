@@ -8,12 +8,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useAuthContext } from '../../hooks/useAuthContext';
 
 
 const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const [allSensors, setAllSensors] = useState([])
-  const {user} = useAuthContext()
   
   const removeDevice=(sensorID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
@@ -51,9 +49,7 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
       arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
       setAllSensors(res.data)
     })
-    }
-    
-  },[rerender, user])
+  },[rerender])
 
   return (
     <TableContainer component={Paper} >

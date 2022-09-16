@@ -12,6 +12,7 @@ import axios from 'axios'
 import Typography from '@mui/material/Typography';
 import { Box } from "@mui/material";
 import Modal from '@mui/material/Modal';
+import {useSnackbar} from "notistack"
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
 const floorPlanStyle = {
@@ -26,12 +27,13 @@ const floorPlanStyle = {
 };
 
 const DisplayTableStatus=({mqttClient})=>{
+  const { enqueueSnackbar } = useSnackbar();
   const [tableStatus,setTableStatus] = useState([])
   const [numerator, setNumerator] = useState()
   const [denominator, setDenominator] = useState()
   const [floorPlan,setFloorPlan] = useState([])
   const [open, setOpen] = useState(false)
-  const [displayGroup, setDisplayGroup] = useState(0)
+  const [dispalyGroup, setDisplayGroup] = useState(0)
 
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down('md'))
@@ -43,27 +45,17 @@ const DisplayTableStatus=({mqttClient})=>{
 
   const { id } = useParams()
 
-  // useEffect(()=>{
-  //   axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
-  //     if (res.data[0] === null){
-  //       setFloorPlan([])
-  //     }else{
-  //       setFloorPlan(res.data)
-  //     }
-  //   })
-  // },[])
-
   useEffect(()=>{
     mqttClient.on('message', messageCallBack)
     function messageCallBack (topic,message){
       if(topic === `bumGoWhere/frontend/update/${id}`){
         const payload = JSON.parse(message)
         
-        const fraction = payload.occupencyRatio.split('/')
-        setNumerator(fraction[0]) 
-        setDenominator(fraction[1])
+        const sensors = payload.sensors
+        setNumerator(sensors.occupiedSensors) 
+        setDenominator(sensors.numOfVibrationSensors)
 
-        const arr = payload.tables.sensors
+        const arr = sensors.sensors
         arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
         const arrSeparationLoop = Math.ceil(arr.length/10) 
         const newArr = []
@@ -83,14 +75,16 @@ const DisplayTableStatus=({mqttClient})=>{
       }else{
         setFloorPlan(res.data)
       }
-    })
+    }).catch((error)=>{customAlert(error.response.data, "error")})
 
     axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
-    const fraction = res.data.occupencyRatio.split('/')
-    setNumerator(fraction[0]) 
-    setDenominator(fraction[1])
-    if(res.data.tables.sensors){
-      const arr = res.data.tables.sensors
+    // const fraction = res.data.occupencyRatio.split('/')
+    const sensors = res.data.sensors
+    console.log(sensors)
+    setNumerator(sensors.occupiedSensors) 
+    setDenominator(sensors.numOfVibrationSensors)
+    if(sensors.sensors){
+      const arr = sensors.sensors
       arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
       const arrSeparationLoop = Math.ceil(arr.length/10) 
       const newArr = []
@@ -101,9 +95,13 @@ const DisplayTableStatus=({mqttClient})=>{
       }
       console.log(newArr)
       setTableStatus(newArr)
-    } 
-    })
+    }
+    }).catch((error)=>{customAlert(error.response.data, "error")})
   },[])
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
+  }
 
   return (
     <div>
@@ -118,7 +116,7 @@ const DisplayTableStatus=({mqttClient})=>{
           
           <Paper sx={{borderRadius: 100, border:"5px solid", borderColor: lightBlue[900], height : 200, width :200, display:"flex", justifyContent:"center", alignItems:"center"}}>
             <Typography variant="h5" display ={"flex"} flexDirection={"column"} justifyContent={"center"} textAlign={"center"}>
-            <Box component='span' sx={{"fontSize": "200%"}}>{numerator}</Box> out of {denominator} tables available</Typography>
+            <Box component='span' sx={{"fontSize": "200%"}}>{denominator - numerator}</Box> out of {denominator} tables available</Typography>
           </Paper>
 
         </Grid>
@@ -134,7 +132,7 @@ const DisplayTableStatus=({mqttClient})=>{
 
           <Grid container spacing={2} columns={{xs:5}} direction="row" justifyContent="space-around" alignItems="center"> 
             {tableStatus.map((item,index)=>{
-              if(index !== displayGroup){
+              if(index !== dispalyGroup){
                 return
               }
               return item.map((i, index)=>{
@@ -150,17 +148,18 @@ const DisplayTableStatus=({mqttClient})=>{
         
       </Grid>
       
-      {isMatch ? <Box border={"solid"} marginTop={"5px"}>
-        {floorPlan.map((singleData, index) => {
-          const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
-            function (data, byte) {
-                return data + String.fromCharCode(byte);
-            },
-            ''
-        ));
-          return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
-        })}
-        <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+      {isMatch ? 
+        <Box border={"solid"} marginTop={"5px"}>
+          {floorPlan.map((singleData, index) => {
+            const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+              function (data, byte) {
+                  return data + String.fromCharCode(byte);
+              },
+              ''
+          ));
+            return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
+          })}
+          <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box> 
         : 
         <Box>
@@ -173,20 +172,23 @@ const DisplayTableStatus=({mqttClient})=>{
           >
             { 
               floorPlan[0] === undefined? 
-              <Box sx={floorPlanStyle}>   <ImageNotSupportedIcon/>    <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
-            </Box> : <Box sx={floorPlanStyle}>
-
-              {floorPlan.map((singleData, index) => {
-                const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
-                  function (data, byte) {
-                      return data + String.fromCharCode(byte);
-                  },
-                  ''
-              ));
-                return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
-              })}
-              <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
-            </Box>
+              <Box sx={floorPlanStyle}>   
+                <ImageNotSupportedIcon/>
+                <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
+              </Box> 
+              : 
+              <Box sx={floorPlanStyle}>
+                {floorPlan.map((singleData, index) => {
+                  const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+                    function (data, byte) {
+                        return data + String.fromCharCode(byte);
+                    },
+                    ''
+                ));
+                  return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
+                })}
+                <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+              </Box>
             }
             
           </Modal>
