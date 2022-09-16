@@ -7,14 +7,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
-import { useAuthContext } from '../../hooks/useAuthContext';
 import axios from 'axios';
 
 
 const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const [allSensors, setAllSensors] = useState([])
-  const {user} = useAuthContext()
-
+  
   const removeDevice=(sensorID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
     mqttClient.publish("zigbee2mqtt/bridge/request/device/remove", `{ "id": "devices/${sensorID}", "force":true}`)
@@ -28,14 +26,8 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
 
   const handleDelete=(e, locationID, sensorID)=>{
     e.preventDefault()
-
-    if(!user) {
-      console.log("user not logged")
-      return
-    }
-
     const payload = {locationID:locationID,sensorID:sensorID}
-    axios.delete("http://localhost:3001/sensor/deleteSensor", {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
+    axios.delete("http://localhost:3001/sensor/deleteSensor",{data:payload}).then((res)=>{
       if(res.status === 200){
         removeDevice(payload.sensorID)
         setRerender(!rerender)
@@ -44,14 +36,14 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   }
 
   useEffect(()=>{
-    if (user){
-      axios.get("http://localhost:3001/sensor/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
-      const arr = res.data[0].sensors
-      arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-      setAllSensors(res.data)
+    axios.get("http://localhost:3001/sensor/getAllSensors").then((res)=>{
+      if(res.data[0]){
+        const arr = res.data[0].sensors
+        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
+        setAllSensors(res.data)
+      }
     })
-    }
-  },[rerender, user])
+  },[rerender])
 
   return (
     <TableContainer component={Paper} >

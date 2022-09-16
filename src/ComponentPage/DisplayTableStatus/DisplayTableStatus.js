@@ -45,17 +45,27 @@ const DisplayTableStatus=({mqttClient})=>{
 
   const { id } = useParams()
 
+  // useEffect(()=>{
+  //   axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
+  //     if (res.data[0] === null){
+  //       setFloorPlan([])
+  //     }else{
+  //       setFloorPlan(res.data)
+  //     }
+  //   })
+  // },[])
+
   useEffect(()=>{
     mqttClient.on('message', messageCallBack)
     function messageCallBack (topic,message){
       if(topic === `bumGoWhere/frontend/update/${id}`){
         const payload = JSON.parse(message)
         
-        const sensors = payload.sensors
-        setNumerator(sensors.occupiedSensors) 
-        setDenominator(sensors.numOfVibrationSensors)
+        const fraction = payload.occupencyRatio.split('/')
+        setNumerator(fraction[0]) 
+        setDenominator(fraction[1])
 
-        const arr = sensors.sensors
+        const arr = payload.tables.sensors
         arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
         const arrSeparationLoop = Math.ceil(arr.length/10) 
         const newArr = []
@@ -75,7 +85,7 @@ const DisplayTableStatus=({mqttClient})=>{
       }else{
         setFloorPlan(res.data)
       }
-    }).catch((error)=>{customAlert(error.response.data, "error")})
+    })
 
     axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
       const sensors = res.data.sensors
@@ -116,7 +126,7 @@ const DisplayTableStatus=({mqttClient})=>{
           
           <Paper sx={{borderRadius: 100, border:"5px solid", borderColor: lightBlue[900], height : 200, width :200, display:"flex", justifyContent:"center", alignItems:"center"}}>
             <Typography variant="h5" display ={"flex"} flexDirection={"column"} justifyContent={"center"} textAlign={"center"}>
-            <Box component='span' sx={{"fontSize": "200%"}}>{denominator - numerator}</Box> out of {denominator} tables available</Typography>
+            <Box component='span' sx={{"fontSize": "200%"}}>{numerator}</Box> out of {denominator} tables available</Typography>
           </Paper>
 
         </Grid>
@@ -148,18 +158,17 @@ const DisplayTableStatus=({mqttClient})=>{
         
       </Grid>
       
-      {isMatch ? 
-        <Box border={"solid"} marginTop={"5px"}>
-          {floorPlan.map((singleData, index) => {
-            const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
-              function (data, byte) {
-                  return data + String.fromCharCode(byte);
-              },
-              ''
-          ));
-            return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
-          })}
-          <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+      {isMatch ? <Box border={"solid"} marginTop={"5px"}>
+        {floorPlan.map((singleData, index) => {
+          const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+            function (data, byte) {
+                return data + String.fromCharCode(byte);
+            },
+            ''
+        ));
+          return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
+        })}
+        <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
         </Box> 
         : 
         <Box>
@@ -172,23 +181,20 @@ const DisplayTableStatus=({mqttClient})=>{
           >
             { 
               floorPlan[0] === undefined? 
-              <Box sx={floorPlanStyle}>   
-                <ImageNotSupportedIcon/>
-                <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
-              </Box> 
-              : 
-              <Box sx={floorPlanStyle}>
-                {floorPlan.map((singleData, index) => {
-                  const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
-                    function (data, byte) {
-                        return data + String.fromCharCode(byte);
-                    },
-                    ''
-                ));
-                  return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
-                })}
-                <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
-              </Box>
+              <Box sx={floorPlanStyle}>   <ImageNotSupportedIcon/>    <h3 style={{"textAlign": "center"}}>Floor Plan Not Exist</h3>
+            </Box> : <Box sx={floorPlanStyle}>
+
+              {floorPlan.map((singleData, index) => {
+                const base64String = btoa(new Uint8Array(singleData.img.data.data).reduce(
+                  function (data, byte) {
+                      return data + String.fromCharCode(byte);
+                  },
+                  ''
+              ));
+                return <img src={`data:image/png ;base64,${base64String}`} width="100%" key={index}/>
+              })}
+              <h3 style={{"textAlign": "center"}}>Floor Plan</h3>
+            </Box>
             }
             
           </Modal>
