@@ -7,12 +7,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
+import { useAuthContext } from '../../hooks/useAuthContext';
 import axios from 'axios';
 
 
 const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   const [allSensors, setAllSensors] = useState([])
-  
+  const {user} = useAuthContext()
+
   const removeDevice=(sensorID)=>{
     // device is force removed, this works with aqara sensor, not sure about other brand
     mqttClient.publish("zigbee2mqtt/bridge/request/device/remove", `{ "id": "devices/${sensorID}", "force":true}`)
@@ -42,14 +44,14 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   }
 
   useEffect(()=>{
-
     if (user){
       axios.get("http://localhost:3001/sensor/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
       const arr = res.data[0].sensors
       arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
       setAllSensors(res.data)
     })
-  },[rerender])
+    }
+  },[rerender, user])
 
   return (
     <TableContainer component={Paper} >
