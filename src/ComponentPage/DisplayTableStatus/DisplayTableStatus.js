@@ -94,11 +94,12 @@ const DisplayTableStatus=({mqttClient})=>{
       setDenominator(sensors.numOfVibrationSensors)
       if(sensors.sensors){
         const arr = sensors.sensors
-        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-        const arrSeparationLoop = Math.ceil(arr.length/10) 
+        const vibrationSensors = arr.filter(item => item.sensorType === "vibration")
+        vibrationSensors.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
+        const arrSeparationLoop = Math.ceil(vibrationSensors.length/10) 
         const newArr = []
         for(let i=0; i<arrSeparationLoop; i++){
-          let partArr = arr.slice(i*10, i*10+10)
+          let partArr = vibrationSensors.slice(i*10, i*10+10)
           // console.log(partArr)
           newArr.push(partArr)
         }
