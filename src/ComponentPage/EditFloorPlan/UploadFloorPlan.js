@@ -50,7 +50,6 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFloorPlan({...floorPlan,['floorPlan']:e.target.files[0]})
-      
     }
   };
 
@@ -135,7 +134,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
 
           <FormControl fullWidth>
           {/* ref={inputRef} */}
-            <input type="file" id="input-file-upload" onChange={handleUploadChange} name="floorPlan" hidden required/>
+            <input type="file" id="input-file-upload" onClick={(e)=>{e.target.value = null}} onChange={handleUploadChange} name="floorPlan" hidden required/>
             <label htmlFor={floorPlan["floorPlan"]["name"]? "" : "input-file-upload" }>
               <Box display={"flex"} justifyContent={"center"} onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop} sx={{ border: '2px dashed grey', borderRadius: 4}}>
                 
@@ -145,7 +144,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
             </label>
             {
               floorPlan["floorPlan"]["name"] && 
-              <Chip label ={floorPlan["floorPlan"]["name"]} onDelete={()=>{setFloorPlan({...floorPlan,['floorPlan']:""})}}/>
+              <Chip label ={floorPlan["floorPlan"]["name"]} onDelete={()=>{setFloorPlan({...floorPlan,['floorPlan']:""}) }}/>
             }
           </FormControl>
           <Button type='submit' variant="outlined">Submit</Button>
