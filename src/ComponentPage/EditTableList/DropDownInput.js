@@ -28,30 +28,30 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   const handleSubmit=(e)=>{
     e.preventDefault()
 
-    let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
+    // let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
     
-    const newSensorObj = {
-      sensorID:id,
-      location: newSensor['location'],
-      locationID: `${locations[newSensor['location']]}_${newSensor['level']}`,
-      level: newSensor['level'],
-      sensorType: newSensor['sensorType']
-    }
+    // const newSensorObj = {
+    //   sensorID:id,
+    //   location: newSensor['location'],
+    //   locationID: `${locations[newSensor['location']]}_${newSensor['level']}`,
+    //   level: newSensor['level'],
+    //   sensorType: newSensor['sensorType']
+    // }
 
-    axios.post("http://localhost:3001/sensor/addSensor", newSensorObj).then((res)=>{
-      if(res.status === 200){
-        customAlert(res.data,"success")
-        setRerender(!rerender)
-        }
-      }).catch((error)=>{customAlert(error.response.data, "error")})
-    setNewSensor({"location":'', "level": '', "id": ''})
+    // axios.post("http://localhost:3001/sensor/addSensor", newSensorObj).then((res)=>{
+    //   if(res.status === 200){
+    //     customAlert(res.data,"success")
+    //     setRerender(!rerender)
+    //     }
+    //   }).catch((error)=>{customAlert(error.response.data, "error")})
+    // setNewSensor({"location":'', "level": '', "id": ''})
 
-    // customAlert("Trying to connect to the IoT hub.","info")
-    // mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
-    // mqttClient.on('message', messageCallBack)
+    customAlert("Trying to connect to the IoT hub.","info")
+    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    mqttClient.on('message', messageCallBack)
 
-    // console.log("listener is up and running.")
-    // customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
+    console.log("listener is up and running.")
+    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
   }
 
   const customAlert=(message,variant)=>{
@@ -74,7 +74,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
         customAlert(res.data,"success")
         setRerender(!rerender)
         }
-      }).catch((error)=>{customAlert(error.response, "error")})
+      }).catch((error)=>{customAlert(error.response.data, "error")})
       setNewSensor({"location":'', "level": '', "id": ''})
   }
   

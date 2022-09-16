@@ -78,26 +78,30 @@ const DisplayTableStatus=({mqttClient})=>{
     }).catch((error)=>{customAlert(error.response.data, "error")})
 
     axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
-    // const fraction = res.data.occupencyRatio.split('/')
-    const sensors = res.data.sensors
-    console.log(sensors)
-    setNumerator(sensors.occupiedSensors) 
-    setDenominator(sensors.numOfVibrationSensors)
-    if(sensors.sensors){
-      const arr = sensors.sensors
-      arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-      const arrSeparationLoop = Math.ceil(arr.length/10) 
-      const newArr = []
-      for(let i=0; i<arrSeparationLoop; i++){
-        let partArr = arr.slice(i*10, i*10+10)
-        // console.log(partArr)
-        newArr.push(partArr)
+      const sensors = res.data.sensors
+      console.log(sensors)
+      setNumerator(sensors.occupiedSensors) 
+      setDenominator(sensors.numOfVibrationSensors)
+      if(sensors.sensors){
+        const arr = sensors.sensors
+        const vibrationSensors = arr.filter(item => item.sensorType === "vibration")
+        vibrationSensors.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
+        const arrSeparationLoop = Math.ceil(vibrationSensors.length/10) 
+        const newArr = []
+        for(let i=0; i<arrSeparationLoop; i++){
+          let partArr = vibrationSensors.slice(i*10, i*10+10)
+          // console.log(partArr)
+          newArr.push(partArr)
+        }
+        console.log(newArr)
+        setTableStatus(newArr)
       }
-      console.log(newArr)
-      setTableStatus(newArr)
-    }
-    }).catch((error)=>{customAlert(error.response.data, "error")})
+      }).catch((error)=>{customAlert(error.response.data, "error")})
   },[])
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
+  }
 
   const customAlert=(message,variant)=>{
     enqueueSnackbar(message, {variant})
