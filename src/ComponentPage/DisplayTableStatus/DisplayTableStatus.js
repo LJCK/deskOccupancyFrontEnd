@@ -12,6 +12,7 @@ import axios from 'axios'
 import Typography from '@mui/material/Typography';
 import { Box } from "@mui/material";
 import Modal from '@mui/material/Modal';
+import {useSnackbar} from "notistack"
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
 const floorPlanStyle = {
@@ -26,6 +27,7 @@ const floorPlanStyle = {
 };
 
 const DisplayTableStatus=({mqttClient})=>{
+  const { enqueueSnackbar } = useSnackbar();
   const [tableStatus,setTableStatus] = useState([])
   const [numerator, setNumerator] = useState()
   const [denominator, setDenominator] = useState()
@@ -86,24 +88,29 @@ const DisplayTableStatus=({mqttClient})=>{
     })
 
     axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
-    const fraction = res.data.occupencyRatio.split('/')
-    setNumerator(fraction[0]) 
-    setDenominator(fraction[1])
-    if(res.data.tables.sensors){
-      const arr = res.data.tables.sensors
-      arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-      const arrSeparationLoop = Math.ceil(arr.length/10) 
-      const newArr = []
-      for(let i=0; i<arrSeparationLoop; i++){
-        let partArr = arr.slice(i*10, i*10+10)
-        // console.log(partArr)
-        newArr.push(partArr)
+      const sensors = res.data.sensors
+      console.log(sensors)
+      setNumerator(sensors.occupiedSensors) 
+      setDenominator(sensors.numOfVibrationSensors)
+      if(sensors.sensors){
+        const arr = sensors.sensors
+        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
+        const arrSeparationLoop = Math.ceil(arr.length/10) 
+        const newArr = []
+        for(let i=0; i<arrSeparationLoop; i++){
+          let partArr = arr.slice(i*10, i*10+10)
+          // console.log(partArr)
+          newArr.push(partArr)
+        }
+        console.log(newArr)
+        setTableStatus(newArr)
       }
-      console.log(newArr)
-      setTableStatus(newArr)
-    } 
-    })
+      }).catch((error)=>{customAlert(error.response.data, "error")})
   },[])
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
+  }
 
   return (
     <div>

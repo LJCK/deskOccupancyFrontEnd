@@ -43,7 +43,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
         customAlert(res.data,"success")
         setRerender(!rerender)
         }
-      }).catch((error)=>{customAlert(error.response, "error")})
+      }).catch((error)=>{customAlert(error.response.data, "error")})
     setNewSensor({"location":'', "level": '', "id": ''})
 
     // customAlert("Trying to connect to the IoT hub.","info")
@@ -74,7 +74,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
         customAlert(res.data,"success")
         setRerender(!rerender)
         }
-      }).catch((error)=>{customAlert(error.response, "error")})
+      }).catch((error)=>{customAlert(error.response.data, "error")})
       setNewSensor({"location":'', "level": '', "id": ''})
   }
   
