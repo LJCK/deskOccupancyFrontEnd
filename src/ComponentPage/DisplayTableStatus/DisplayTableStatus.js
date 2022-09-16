@@ -103,10 +103,6 @@ const DisplayTableStatus=({mqttClient})=>{
     enqueueSnackbar(message, {variant})
   }
 
-  const customAlert=(message,variant)=>{
-    enqueueSnackbar(message, {variant})
-  }
-
   return (
     <div>
       <Grid  container spacing={{ xs: 6}}  justifyContent={"center"} paddingTop={"15px"}>
