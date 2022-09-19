@@ -15,6 +15,8 @@ import Modal from '@mui/material/Modal';
 import {useSnackbar} from "notistack"
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 
+console.log("env virable ", process.env.REACT_APP_API_URL)
+
 const floorPlanStyle = {
   position: 'absolute',
   top: '50%',
