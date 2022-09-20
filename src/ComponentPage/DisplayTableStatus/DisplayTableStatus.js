@@ -63,8 +63,8 @@ const DisplayTableStatus=({mqttClient})=>{
         setNumerator(fraction[0]) 
         setDenominator(fraction[1])
 
-        const arr = payload.tables.desks
-        arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+        const arr = payload.tables.sensors
+        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
         const arrSeparationLoop = Math.ceil(arr.length/10) 
         const newArr = []
         for(let i=0; i<arrSeparationLoop; i++){
@@ -89,9 +89,9 @@ const DisplayTableStatus=({mqttClient})=>{
     const fraction = res.data.occupencyRatio.split('/')
     setNumerator(fraction[0]) 
     setDenominator(fraction[1])
-    if(res.data.tables.desks){
-      const arr = res.data.tables.desks
-      arr.sort(function(a,b){return a.deskID.localeCompare(b.deskID, undefined, {numeric:1})})
+    if(res.data.tables.sensors){
+      const arr = res.data.tables.sensors
+      arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
       const arrSeparationLoop = Math.ceil(arr.length/10) 
       const newArr = []
       for(let i=0; i<arrSeparationLoop; i++){
@@ -128,7 +128,7 @@ const DisplayTableStatus=({mqttClient})=>{
           
           <Grid item xs={12} display={"flex"} justifyContent={"center"} maxHeight={"30px"} marginBottom={"20px"}>
             {tableStatus.map((item, index)=>{
-              return <Button variant="outlined" key={index} onClick={()=>setDisplayGroup(index)}>{item[0]["deskID"].split("_").at(-1)} - {item.at(-1)["deskID"].split("_").at(-1)}</Button>
+              return <Button variant="outlined" key={index} onClick={()=>setDisplayGroup(index)}>{item[0]["sensorID"].split("_").at(-1)} - {item.at(-1)["sensorID"].split("_").at(-1)}</Button>
             })}
           </Grid>
 
@@ -140,7 +140,7 @@ const DisplayTableStatus=({mqttClient})=>{
               return item.map((i, index)=>{
                 return <Grid item xs={1} key={index} display={"flex"} justifyContent={"center"}>
                   <Paper sx={{bgcolor : i["status"] ==="unoccupied" ? "#C1F4B8" : "#FFA5A5", height: 60, width:40}} >
-                    Table <Box component={"span"} display={"flex"} justifyContent={"center"}>{i["deskID"].split("_").at(-1)}</Box>
+                    Table <Box component={"span"} display={"flex"} justifyContent={"center"}>{i["sensorID"].split("_").at(-1)}</Box>
                   </Paper>
                 </Grid>
               })

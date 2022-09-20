@@ -16,42 +16,42 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   const { enqueueSnackbar } = useSnackbar();
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
-  const [newDesk, setNewDesk]= useState({
+  const [newSensor, setNewSensor]= useState({
     "location":'', "level": '', "id": '', "sensorType":''
   })
 
   const handleChange = (e) => {
     e.preventDefault()
-    setNewDesk({...newDesk,[e.target.name]:e.target.value})
+    setNewSensor({...newSensor,[e.target.name]:e.target.value})
   };
 
   const handleSubmit=(e)=>{
     e.preventDefault()
 
-    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
+    let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
     
-    // const newDeskObj = {
-    //   deskID:id,
-    //   location: newDesk['location'],
-    //   locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
-    //   level: newDesk['level'],
-    //   sensorType: newDesk['sensorType']
-    // }
+    const newSensorObj = {
+      sensorID:id,
+      location: newSensor['location'],
+      locationID: `${locations[newSensor['location']]}_${newSensor['level']}`,
+      level: newSensor['level'],
+      sensorType: newSensor['sensorType']
+    }
 
-    // axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
-    //   if(res.status === 200){
-    //     customAlert(res.data,"success")
-    //     setRerender(!rerender)
-    //     }
-    //   }).catch((error)=>{customAlert(error.response, "error")})
-    // setNewDesk({"location":'', "level": '', "id": ''})
+    axios.post("http://localhost:3001/sensor/addSensor", newSensorObj).then((res)=>{
+      if(res.status === 200){
+        customAlert(res.data,"success")
+        setRerender(!rerender)
+        }
+      }).catch((error)=>{customAlert(error.response, "error")})
+    setNewSensor({"location":'', "level": '', "id": ''})
 
-    customAlert("Trying to connect to the IoT hub.","info")
-    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
-    mqttClient.on('message', messageCallBack)
+    // customAlert("Trying to connect to the IoT hub.","info")
+    // mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    // mqttClient.on('message', messageCallBack)
 
-    console.log("listener is up and running.")
-    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
+    // console.log("listener is up and running.")
+    // customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
   }
 
   const customAlert=(message,variant)=>{
@@ -59,28 +59,28 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   }
 
   function updateDB(){
-    console.log("new desk ", newDesk)
-    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
-    const newDeskObj = {
-      deskID:id,
-      location: newDesk['location'],
-      locationID: `${locations[newDesk['location']]}_${newDesk['level']}`,
-      level: newDesk['level'],
-      sensorType: newDesk['sensorType']
+    console.log("new sensor ", newSensor)
+    let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
+    const newSensorObj = {
+      sensorID:id,
+      location: newSensor['location'],
+      locationID: `${locations[newSensor['location']]}_${newSensor['level']}`,
+      level: newSensor['level'],
+      sensorType: newSensor['sensorType']
     }
 
-    axios.post("http://localhost:3001/desk/addDesk", newDeskObj).then((res)=>{
+    axios.post("http://localhost:3001/sensor/addSensor", newSensorObj).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
         setRerender(!rerender)
         }
       }).catch((error)=>{customAlert(error.response, "error")})
-      setNewDesk({"location":'', "level": '', "id": ''})
+      setNewSensor({"location":'', "level": '', "id": ''})
   }
   
   function messageCallBack (topic, payload) {
     const msg = JSON.parse(payload.toString());
-    let id = `${locations[newDesk['location']]}_${newDesk['level']}_${newDesk['sensorType']}_${newDesk['id']}`
+    let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
 
     if (topic === "zigbee2mqtt/bridge/event" && msg.type === "device_interview") {
       switch (msg.data.status) {
@@ -117,7 +117,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={newDesk.location}
+              value={newSensor.location}
               name="location"
               label="Location"
               onChange={handleChange}
@@ -134,7 +134,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={newDesk.level}
+              value={newSensor.level}
               name="level"
               label="Level"
               onChange={handleChange}
@@ -153,14 +153,16 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={newDesk.sensorType}
+              value={newSensor.sensorType}
               name="sensorType"
               label="Sensor Type"
               onChange={handleChange}
               required
             >
-            <MenuItem value={"vibration"}>Vibration</MenuItem>
-            <MenuItem value={"other"}>Other</MenuItem>
+              {/* can change these menu item to an array */}
+              <MenuItem value={"vibration"}>Vibration</MenuItem>
+              <MenuItem value={"other"}>Other</MenuItem>
+              <MenuItem value={""}></MenuItem>
             </Select>
           </FormControl>
 
@@ -170,7 +172,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
               id="outlined-required"
               name="id"
               label="Sensor ID"
-              value={newDesk.id}
+              value={newSensor.id}
               onChange={handleChange}
               type ="number"
             />
