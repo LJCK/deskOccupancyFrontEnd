@@ -36,41 +36,41 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
   const handleSubmit=(e)=>{
     e.preventDefault()
 
-    let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
+    // let id = `${locations[newSensor['location']]}_${newSensor['level']}_${newSensor['sensorType']}_${newSensor['id']}`
     
-    const newSensorObj = {
-      sensorID:id,
-      location: newSensor['location'],
-      locationID: `${locations[newSensor['location']]}_${newSensor['level']}`,
-      level: newSensor['level'],
-      sensorType: newSensor['sensorType']
-    }
+    // const newSensorObj = {
+    //   sensorID:id,
+    //   location: newSensor['location'],
+    //   locationID: `${locations[newSensor['location']]}_${newSensor['level']}`,
+    //   level: newSensor['level'],
+    //   sensorType: newSensor['sensorType']
+    // }
 
-    if(user) {
-      axios.post(`${process.env.REACT_APP_API_URL}/sensor/addSensor`, newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}} ).then((res)=>{
-      if(res.status === 200){
-        customAlert(res.data,"success")
-        setRerender(!rerender)
-        }
-      }).catch((error)=>{
-        if(error.response.data.error === "Your login session has expired."){
-          customAlert(error.response.data.error, "error")
-          logout()
-        }else{
-          console.log("this is the error",error)
-          customAlert("error here", "error")
-        }
-      })
-    }
+    // if(user) {
+    //   axios.post(`${process.env.REACT_APP_API_URL}/sensor/addSensor`, newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}} ).then((res)=>{
+    //   if(res.status === 200){
+    //     customAlert(res.data,"success")
+    //     setRerender(!rerender)
+    //     }
+    //   }).catch((error)=>{
+    //     if(error.response.data.error === "Your login session has expired."){
+    //       customAlert(error.response.data.error, "error")
+    //       logout()
+    //     }else{
+    //       console.log("this is the error",error)
+    //       customAlert("error here", "error")
+    //     }
+    //   })
+    // }
     
-    setNewSensor({"location":'', "level": '', "id": ''})
+    // setNewSensor({"location":'', "level": '', "id": ''})
 
-    // customAlert("Trying to connect to the IoT hub.","info")
-    // mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
-    // mqttClient.on('message', messageCallBack)
+    customAlert("Trying to connect to the IoT hub.","info")
+    mqttClient.publish("zigbee2mqtt/bridge/request/permit_join", '{ "value": true }', { "qos": 1 });
+    mqttClient.on('message', messageCallBack)
 
-    // console.log("listener is up and running.")
-    // customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
+    console.log("listener is up and running.")
+    customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
   }
 
   function updateDB(){
@@ -84,7 +84,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
       sensorType: newSensor['sensorType']
     }
     if(user){
-      axios.post(`${process.env.REACT_APP_API_URL}/sensor/addSensor`, newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}}).then((res)=>{
+      axios.post(`${process.env.REACT_APP_API_URL}/sensor/addSensor`, newSensorObj).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
         setRerender(!rerender)

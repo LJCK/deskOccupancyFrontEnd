@@ -63,8 +63,6 @@ mqttClient.on('connect', () => {
   // mqttClient.on("message", messageCallBack)
 });
 
-let tableObjs
-
 // function messageCallBack (topic,message){
 //   if(topic === "bumGoWhere/frontend/update"){
 //     tableObjs = JSON.parse(message)
@@ -97,10 +95,10 @@ function App() {
           <Routes>
               <Route exact path='/' element = {<Home />}></Route>
               <Route path='/:id' element = {<DisplayTableStatus mqttClient={mqttClient}/>}></Route>
-              <Route path='/editTable' element = {user ? <EditTableList mqttClient={mqttClient}/> : <Navigate to="/" />}></Route>
-              <Route path = '/editFloorPlan' element = {user ? <EditFloorPlan/> : <Navigate to="/" />}></Route>
-              <Route path='/login' element={!user ? <Login/> : <Navigate to="/" />}></Route>
-              <Route path='/signup' element={!user ? <Signup/> : <Navigate to="/" />}></Route>
+              <Route path='/editTable' element = {user ? <EditTableList mqttClient={mqttClient}/> : <Home />}></Route>
+              <Route path = '/editFloorPlan' element = {user ? <EditFloorPlan/> : <Home />}></Route>
+              <Route path='/login' element={!user ? <Login/> : <Home />}></Route>
+              <Route path='/signup' element={!user ? <Signup/> : <Home />}></Route>
           </Routes>
         </Router>
       </ThemeProvider>

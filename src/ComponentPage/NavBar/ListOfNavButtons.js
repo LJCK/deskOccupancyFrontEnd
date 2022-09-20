@@ -54,6 +54,8 @@ const ListOfNavButtons =({config})=>{
 
   const handleClick = () => {
     logout()
+    navigate('/')
+    
   }
 
   const { user } = useAuthContext()
