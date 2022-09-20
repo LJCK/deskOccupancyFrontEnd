@@ -85,7 +85,7 @@ const DisplayTableStatus=({mqttClient})=>{
       }
     })
 
-    axios.get(`http://localhost:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
+    axios.get(`http://10.0.128.71:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
     const fraction = res.data.occupencyRatio.split('/')
     setNumerator(fraction[0]) 
     setDenominator(fraction[1])
