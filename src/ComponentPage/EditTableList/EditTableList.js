@@ -17,6 +17,7 @@ export const EditTableList = ({mqttClient}) => {
   const [levels,setLevels] = useState(allLevels)
   const [rerender, setRerender] = useState(false)
   
+  
   return (
     <div>
       <Grid container justifyContent="center">

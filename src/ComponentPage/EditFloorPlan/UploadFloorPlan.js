@@ -9,19 +9,27 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import axios from 'axios';
+import {useSnackbar} from "notistack"
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useLogout } from '../../hooks/useLogout';
 
 const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, config}) => {
 
+  const { enqueueSnackbar } = useSnackbar();
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   const [floorPlan, setFloorPlan]= useState({
     "location":"", "level": "", "floorPlan": ""
   })
-  
+  const {user} = useAuthContext()
+  const { logout } = useLogout()
+
   // drag state
   const [dragActive, setDragActive] = useState(false);
   // ref
   const previousValue = useRef(null);
+
+  
 
   // handle drag events
   const handleDrag = (e)=> {
@@ -70,9 +78,11 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     newFloorPlanObj.append('location',floorPlan['location'])
     newFloorPlanObj.append('level',floorPlan['level'])
     newFloorPlanObj.append("file",floorPlan['floorPlan'])
-    axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
+    if(user){
+      axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
       headers:{
-        "Content-Type":"multipart/form-data"
+        "Content-Type":"multipart/form-data",
+        "Authorization" : `Bearer ${user.token}`
       }
     }).then((res)=>{
       console.log(res.data)
@@ -80,14 +90,26 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
       setFloorPlan({"location":'', "level": '', "floorPlan": ''})
     }).catch((error)=>{
       console.log(error.response.data.toString())
+      if(error.response.data.error === "Your login session has expired."){
+        customAlert(error.response.data.error, "error")
+        logout()
+      }else{
+        customAlert(error.response.data, "error")
+      }
       setFloorPlan({"location":'', "level": '', "floorPlan": ''})    
     })
+    }
+    
   }
 
   const handleFormChange=(e)=>{
     e.preventDefault();
     setFloorPlan({...floorPlan,[e.target.name]:e.target.value})
     console.log(floorPlan)
+  }
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
   }
 
   return (

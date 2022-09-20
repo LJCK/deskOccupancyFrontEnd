@@ -10,15 +10,23 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import {useSnackbar} from "notistack"
 import axios from 'axios';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { useLogout } from '../../hooks/useLogout';
 
 const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRerender, config}) => {
 
+  const {user} = useAuthContext()
   const { enqueueSnackbar } = useSnackbar();
   const [locations,setLocations]= useState(locationState)
   const [levels,setLevels] = useState(levelState)
   const [newSensor, setNewSensor]= useState({
     "location":'', "level": '', "id": '', "sensorType":''
   })
+  const { logout } = useLogout()
+
+  const customAlert=(message,variant)=>{
+    enqueueSnackbar(message, {variant})
+  }
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -38,12 +46,23 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
       sensorType: newSensor['sensorType']
     }
 
-    axios.post("http://localhost:3001/sensor/addSensor", newSensorObj).then((res)=>{
+    if(user) {
+      axios.post("http://localhost:3001/sensor/addSensor", newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}} ).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
         setRerender(!rerender)
         }
-      }).catch((error)=>{customAlert(error.response, "error")})
+      }).catch((error)=>{
+        if(error.response.data.error === "Your login session has expired."){
+          customAlert(error.response.data.error, "error")
+          logout()
+        }else{
+          console.log("this is the error",error)
+          customAlert("error here", "error")
+        }
+      })
+    }
+    
     setNewSensor({"location":'', "level": '', "id": ''})
 
     // customAlert("Trying to connect to the IoT hub.","info")
@@ -52,10 +71,6 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
 
     // console.log("listener is up and running.")
     // customAlert("Hub connected, please press and hold the button on the sensor until it stop blinking.", "success")
-  }
-
-  const customAlert=(message,variant)=>{
-    enqueueSnackbar(message, {variant})
   }
 
   function updateDB(){
@@ -68,14 +83,23 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
       level: newSensor['level'],
       sensorType: newSensor['sensorType']
     }
-
-    axios.post("http://localhost:3001/sensor/addSensor", newSensorObj).then((res)=>{
+    if(user){
+      axios.post("http://localhost:3001/sensor/addSensor", newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}}).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
         setRerender(!rerender)
         }
-      }).catch((error)=>{customAlert(error.response, "error")})
+      }).catch((error)=>{
+        if(error.response.data.error === "Your login session has expired."){
+          customAlert(error.response.data.error, "error")
+          logout()
+        }else{
+          customAlert(error.response.data, "error")
+        }
+      })
       setNewSensor({"location":'', "level": '', "id": ''})
+    }
+    
   }
   
   function messageCallBack (topic, payload) {

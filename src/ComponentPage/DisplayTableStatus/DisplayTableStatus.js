@@ -59,20 +59,6 @@ const DisplayTableStatus=({mqttClient})=>{
       if(topic === `bumGoWhere/frontend/update/${id}`){
         const payload = JSON.parse(message)
         
-        const fraction = payload.occupencyRatio.split('/')
-        setNumerator(fraction[0]) 
-        setDenominator(fraction[1])
-
-        const arr = payload.tables.sensors
-        arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-        const arrSeparationLoop = Math.ceil(arr.length/10) 
-        const newArr = []
-        for(let i=0; i<arrSeparationLoop; i++){
-          let partArr = arr.slice(i*10, i*10+10)
-          // console.log(partArr)
-          newArr.push(partArr)
-        }
-        setTableStatus(newArr)
 
       }
     }
@@ -85,25 +71,27 @@ const DisplayTableStatus=({mqttClient})=>{
       }
     })
 
-    axios.get(`http://10.0.128.71:3001/desk/getDeskStatus?level=${id}`).then((res)=>{
-    const fraction = res.data.occupencyRatio.split('/')
-    setNumerator(fraction[0]) 
-    setDenominator(fraction[1])
-    if(res.data.tables.sensors){
-      const arr = res.data.tables.sensors
-      arr.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})})
-      const arrSeparationLoop = Math.ceil(arr.length/10) 
-      const newArr = []
-      for(let i=0; i<arrSeparationLoop; i++){
-        let partArr = arr.slice(i*10, i*10+10)
-        // console.log(partArr)
-        newArr.push(partArr)
-      }
-      console.log(newArr)
-      setTableStatus(newArr)
-    } 
-    })
-  },[])
+    axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
+      const sensors = res.data.sensors
+      setNumerator(sensors.occupiedSensors) 
+      setDenominator(sensors.numOfVibrationSensors)
+
+      if(sensors.sensors){
+        const arr = sensors.sensors 
+        const vibrationSensors = arr.filter(item => item.sensorType === "vibration") 
+        vibrationSensors.sort(function(a,b){return a.sensorID.localeCompare(b.sensorID, undefined, {numeric:1})}) 
+        const arrSeparationLoop = Math.ceil(vibrationSensors.length/10)  
+        const newArr = [] 
+        for(let i=0; i<arrSeparationLoop; i++){ 
+          let partArr = vibrationSensors.slice(i*10, i*10+10) 
+          // console.log(partArr) 
+          newArr.push(partArr) 
+        } 
+        console.log(newArr) 
+        setTableStatus(newArr)
+      } 
+    }).catch((error)=>{ console.log(error)})
+  },[id])
 
   return (
     <div>
@@ -118,7 +106,7 @@ const DisplayTableStatus=({mqttClient})=>{
           
           <Paper sx={{borderRadius: 100, border:"5px solid", borderColor: lightBlue[900], height : 200, width :200, display:"flex", justifyContent:"center", alignItems:"center"}}>
             <Typography variant="h5" display ={"flex"} flexDirection={"column"} justifyContent={"center"} textAlign={"center"}>
-            <Box component='span' sx={{"fontSize": "200%"}}>{numerator}</Box> out of {denominator} tables available</Typography>
+            <Box component='span' sx={{"fontSize": "200%"}}>{denominator - numerator}</Box> out of {denominator} tables available</Typography>
           </Paper>
 
         </Grid>
@@ -139,7 +127,7 @@ const DisplayTableStatus=({mqttClient})=>{
               }
               return item.map((i, index)=>{
                 return <Grid item xs={1} key={index} display={"flex"} justifyContent={"center"}>
-                  <Paper sx={{bgcolor : i["status"] ==="unoccupied" ? "#C1F4B8" : "#FFA5A5", height: 60, width:40}} >
+                  <Paper sx={{bgcolor : i["status"] ==="unoccupied" || i["status"] === null? "#C1F4B8" : "#FFA5A5", height: 60, width:40}} >
                     Table <Box component={"span"} display={"flex"} justifyContent={"center"}>{i["sensorID"].split("_").at(-1)}</Box>
                   </Paper>
                 </Grid>
