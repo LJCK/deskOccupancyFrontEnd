@@ -47,7 +47,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
     }
 
     if(user) {
-      axios.post("http://localhost:3001/sensor/addSensor", newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}} ).then((res)=>{
+      axios.post(`${process.env.REACT_APP_API_URL}/sensor/addSensor`, newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}} ).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
         setRerender(!rerender)
@@ -84,7 +84,7 @@ const DropDownInput = ({locationState, levelState, mqttClient, rerender, setRere
       sensorType: newSensor['sensorType']
     }
     if(user){
-      axios.post("http://localhost:3001/sensor/addSensor", newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}}).then((res)=>{
+      axios.post(`${process.env.REACT_APP_API_URL}/sensor/addSensor`, newSensorObj, {headers: {"Authorization" : `Bearer ${user.token}`}}).then((res)=>{
       if(res.status === 200){
         customAlert(res.data,"success")
         setRerender(!rerender)

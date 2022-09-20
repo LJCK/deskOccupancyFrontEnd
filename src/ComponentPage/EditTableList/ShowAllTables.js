@@ -44,7 +44,7 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
     
 
     const payload = {locationID:locationID,sensorID:sensorID}
-    axios.delete("http://localhost:3001/sensor/deleteSensor", {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
+    axios.delete(`${process.env.REACT_APP_API_URL}/sensor/deleteSensor`, {headers: {"Authorization" : `Bearer ${user.token}`}, data:payload}).then((res)=>{
       if(res.status === 200){
         removeDevice(payload.sensorID)
         setRerender(!rerender)
@@ -62,7 +62,7 @@ const ShowAllTables = ({mqttClient, rerender, setRerender}) => {
   useEffect(()=>{
 
     if (user){
-      axios.get("http://localhost:3001/sensor/getAllSensors", { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
+      axios.get(`${process.env.REACT_APP_API_URL}/sensor/getAllSensors`, { headers: {"Authorization" : `Bearer ${user.token}`} }).then((res)=>{
       console.log("this is the response:", res.data)
       if(res.data){
         const arr = res.data[0].sensors

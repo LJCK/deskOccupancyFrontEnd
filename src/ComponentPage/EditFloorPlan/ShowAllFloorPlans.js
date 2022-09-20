@@ -23,7 +23,7 @@ const ShowAllFloorPlans = ({rerender, setRerender}) => {
     e.preventDefault()
     const payload = {id: id}
     if(user) {
-      axios.delete("http://localhost:3001/floorPlan/deleteImage", {headers: {"Authorization" : `Bearer ${user.token}`}, data : payload}).then((res)=>{
+      axios.delete(`${process.env.REACT_APP_API_URL}/floorPlan/deleteImage`, {headers: {"Authorization" : `Bearer ${user.token}`}, data : payload}).then((res)=>{
       console.log("res is ", res.data)
       setRerender(!rerender)
     }).catch((error)=>{
@@ -40,7 +40,7 @@ const ShowAllFloorPlans = ({rerender, setRerender}) => {
 
   useEffect(()=>{
     if(user) {
-      axios.get("http://localhost:3001/floorPlan/getAllImages", { headers: {"Authorization" : `Bearer ${user.token}`}}).then((res)=>{ 
+      axios.get(`${process.env.REACT_APP_API_URL}/floorPlan/getAllImages`, { headers: {"Authorization" : `Bearer ${user.token}`}}).then((res)=>{ 
     setAllImages(res.data)
     }).catch((error)=>{
       if(error.response.data.error === "Your login session has expired."){

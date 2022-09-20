@@ -44,7 +44,7 @@ const DisplayTableStatus=({mqttClient})=>{
   const { id } = useParams()
 
   // useEffect(()=>{
-  //   axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
+  //   axios.get(`${process.env.REACT_APP_API_URL}/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
   //     if (res.data[0] === null){
   //       setFloorPlan([])
   //     }else{
@@ -63,7 +63,7 @@ const DisplayTableStatus=({mqttClient})=>{
       }
     }
 
-    axios.get(`http://localhost:3001/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
+    axios.get(`${process.env.REACT_APP_API_URL}/floorPlan/getImage?filename=${id}_floor_plan`).then((res)=>{
       if (res.data[0] === null){
         setFloorPlan([])
       }else{
@@ -71,7 +71,7 @@ const DisplayTableStatus=({mqttClient})=>{
       }
     })
 
-    axios.get(`http://localhost:3001/sensor/getSensorStatus?level=${id}`).then((res)=>{
+    axios.get(`${process.env.REACT_APP_API_URL}/sensor/getSensorStatus?level=${id}`).then((res)=>{
       const sensors = res.data.sensors
       setNumerator(sensors.occupiedSensors) 
       setDenominator(sensors.numOfVibrationSensors)

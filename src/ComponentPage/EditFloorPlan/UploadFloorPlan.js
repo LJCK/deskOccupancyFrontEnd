@@ -79,7 +79,7 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     newFloorPlanObj.append('level',floorPlan['level'])
     newFloorPlanObj.append("file",floorPlan['floorPlan'])
     if(user){
-      axios.post("http://localhost:3001/floorPlan/uploadImage", newFloorPlanObj,{
+      axios.post(`${process.env.REACT_APP_API_URL}/floorPlan/uploadImage`, newFloorPlanObj,{
       headers:{
         "Content-Type":"multipart/form-data",
         "Authorization" : `Bearer ${user.token}`
