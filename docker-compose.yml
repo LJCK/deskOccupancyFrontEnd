@@ -1,0 +1,12 @@
+version: "2.2" 
+services: 
+    nginc-react: 
+      image: reactapp:bumGoWhereImage 
+      container_name: bumGoWhereContainer 
+      build: 
+        context: . 
+        dockerfile: Dockerfile 
+      ports: 
+        - 80:80 
+      environment: 
+        NODE_ENV: production
