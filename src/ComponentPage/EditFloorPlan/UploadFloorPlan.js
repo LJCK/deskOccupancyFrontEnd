@@ -75,16 +75,11 @@ const UploadFloorPlan = ({locationState,levelState, rerender, setRerender, confi
     // example of id: nva_8_floor_plan. Novena Tower A, level 8.
     let id = `${locations[floorPlan['location']]}_${floorPlan['level']}_floor_plan`
     newFloorPlanObj.append('UID',id)
-    newFloorPlanObj.append('location',floorPlan['location'])
-    newFloorPlanObj.append('level',floorPlan['level'])
+    // newFloorPlanObj.append('location',floorPlan['location'])
+    // newFloorPlanObj.append('level',floorPlan['level'])
     newFloorPlanObj.append("file",floorPlan['floorPlan'])
     if(user){
-      axios.post(`${process.env.REACT_APP_API_URL}/floorPlan/uploadImage`, newFloorPlanObj,{
-      headers:{
-        "Content-Type":"multipart/form-data",
-        "Authorization" : `Bearer ${user.token}`
-      }
-    }).then((res)=>{
+      axios.post(`${process.env.REACT_APP_API_URL}/floorPlan/uploadDocx`, newFloorPlanObj).then((res)=>{
       console.log(res.data)
       setRerender(!rerender)
       setFloorPlan({"location":'', "level": '', "floorPlan": ''})
